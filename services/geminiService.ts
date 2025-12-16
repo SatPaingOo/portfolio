@@ -1,6 +1,10 @@
 import { GoogleGenAI, Chat } from "@google/genai";
 import { PORTFOLIO_DATA } from '../constants';
 
+// Global switch to completely disable live Gemini API calls.
+// When true, Aura will ALWAYS use the local fallback responses
+// and will NEVER send network requests to Google.
+const FORCE_OFFLINE = true;
 const SYSTEM_INSTRUCTION = `
 **Identity:** You are 'Aura,' an advanced, holographic Virtual Guide embedded in Sat Paing Oo's modern portfolio (simulated in a web environment).
 **Core Directive:** Translate complex JSON data and technical concepts into engaging, visually rich, and easy-to-digest interactive experiences for a technical audience (recruiters, senior developers).
@@ -352,10 +356,17 @@ export const initializeChat = () => {
 
 // Export function to check if API is available
 export const isApiAvailable = (): boolean => {
+  if (FORCE_OFFLINE) return false;
   return hasValidApiKey() && !quotaExceeded;
 };
 
 export const sendMessageToGemini = async (message: string): Promise<string> => {
+  // Hard override: never call the live API when FORCE_OFFLINE is enabled
+  if (FORCE_OFFLINE) {
+    console.log('Aura: FORCE_OFFLINE enabled - using offline responses only (no Gemini API calls)');
+    return getFallbackResponse(message);
+  }
+
   // FIRST CHECK: Validate API key - if not valid, return immediately without any API calls
   if (!hasValidApiKey()) {
     console.log('Aura: No valid API key - using offline mode');

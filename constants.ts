@@ -36,7 +36,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
       {name: "MS SQL Server", level: "Expert"},
       {name: "MySQL", level: "Proficient"},
       {name: "Windows Server", level: "Proficient"},
-      {name: "CI/CD (Jenkins / GitHub Actions)", level: "Proficient"}
+      {name: "CI/CD (GitHub Actions)", level: "Proficient"}
     ],
     specialty: [
       {name: "POS & E-Commerce Systems", level: "Expert"},

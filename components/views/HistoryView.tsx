@@ -70,6 +70,33 @@ const HistoryView: React.FC = () => {
                     </div>
                 ))}
             </div>
+
+            {/* Certifications Section */}
+            <div>
+                 <span className="absolute -left-[21px] flex h-10 w-10 items-center justify-center rounded-full bg-black border-2 border-holo-400 shadow-[0_0_10px_rgba(56,223,255,0.5)]">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-holo-300">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37L12 16.5l-3.59-2.13A2 2 0 0 1 7 12.72V7.5l5-3 5 3v5.22a2 2 0 0 1-1.41 1.65z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5v4.25m0 0l-2.5-1.5m2.5 1.5l2.5-1.5" />
+                    </svg>
+                </span>
+                <h3 className="text-2xl font-bold text-white ml-8 mb-6">Certifications</h3>
+                 {PORTFOLIO_DATA.certifications.map((cert, idx) => (
+                    <div key={idx} className="ml-8 mb-8 relative group">
+                         <div className="absolute -left-[41px] top-2 h-4 w-4 rounded-full bg-holo-950 border border-holo-500 group-hover:bg-holo-400 transition-colors"></div>
+                        <div className="glass-panel p-6 rounded-lg border-l-4 border-l-emerald-500 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all">
+                             <div className="flex flex-col md:flex-row md:justify-between md:items-start">
+                                <div>
+                                    <h4 className="text-xl font-bold text-emerald-200">{cert.name}</h4>
+                                    <h5 className="text-lg text-white font-display">{cert.issuer}</h5>
+                                </div>
+                                <span className="mt-2 md:mt-0 px-3 py-1 bg-emerald-900/40 rounded text-sm text-emerald-300 font-mono border border-emerald-800">
+                                    {cert.year}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
         </div>
       </div>
     </div>

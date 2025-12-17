@@ -10,7 +10,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
       linkedin: "https://www.linkedin.com/in/satpaingoo777/",
       github: "https://github.com/SatPaingOo"
     },
-    location: "Yangon, Myanmar",
+    location: "Thailand",
     languagesSpoken: ["Burmese (Native)", "English (Fluent)"]
   },
   skills: {
@@ -23,7 +23,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
       {name: "React", level: "Expert"},
       {name: "React Native", level: "Familiar"},
       {name: "Electron", level: "Familiar"},
-      {name: "Next.js", level: "Expert"},
+      {name: "Next.js", level: "Proficient"},
       {name: "Redux/Zustand", level: "Proficient"},
       {name: "Bootstrap", level: "Expert"},
       {name: "Tailwind CSS", level: "Familiar"},
@@ -36,7 +36,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
       {name: "MS SQL Server", level: "Expert"},
       {name: "MySQL", level: "Proficient"},
       {name: "Windows Server", level: "Proficient"},
-      {name: "CI/CD (GitHub Actions)", level: "Proficient"}
+      {name: "CI/CD (GitHub Actions)", level: "Familiar"}
     ],
     specialty: [
       {name: "Full Stack Web Applications", level: "Expert"},
@@ -87,7 +87,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
     },
     {
       institution: "Metro IT & Japanese Language Center",
-      degree: "IT developer & Japanese Language N4 Level",
+      degree: "IT Diploma & Japanese Language N4 Level",
       duration: "2016 - 2018"
     },
     {
@@ -97,8 +97,16 @@ export const PORTFOLIO_DATA: PortfolioData = {
     }
   ],
   certifications: [
-    {name: "AWS Certified Solutions Architect - Associate", year: 2023, issuer: "Amazon Web Services"},
-    {name: "Certified Kubernetes Application Developer (CKAD)", year: 2024, issuer: "CNCF"}
+    {
+      name: "Certificate of Completion – React Basics & Advanced React (Meta)",
+      year: 2025,
+      issuer: "Coursera / Meta"
+    },
+    {
+      name: "Certificate – Python Programming & Data Engineering (ETL, ELT, Data Pipeline)",
+      year: 2025,
+      issuer: "Myanmar Data Tech (MMDT)"
+    }
   ],
   projects: [
     {

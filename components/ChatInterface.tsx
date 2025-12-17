@@ -170,6 +170,19 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
     const lines = text.split('\n');
     
     return lines.map((line, lineIndex) => {
+      // Special handling for Aura's "materializes" stage-direction line:
+      // Render it as a subtle, italicized system cue instead of a long, noisy bracketed sentence.
+      if (line.trim() === '[Aura materializes as a semi-transparent cyan wireframe projection, casting a soft glow over the screen.]') {
+        return (
+          <div
+            key={`line-${lineIndex}`}
+            className="mb-2 text-xs italic text-holo-400"
+          >
+            Aura appears as a holographic guide.
+          </div>
+        );
+      }
+      
       // Skip empty lines but preserve spacing
       if (line.trim() === '') {
         return <br key={`line-${lineIndex}`} />;
@@ -206,12 +219,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
               <div className="w-10 h-10 rounded-full border-2 border-holo-400 flex items-center justify-center relative bg-black">
                  {/* Simple Geometric Representation of Aura */}
                  <div className="w-6 h-6 border border-holo-300 rotate-45 animate-spin-slow"></div>
-                 <div className="absolute w-4 h-4 bg-holo-500/50 blur-sm rounded-full animate-pulse"></div>
+                 <div className="absolute w-4 h-4 bg-holo-400/60 blur-sm rounded-full animate-pulse"></div>
               </div>
               <div>
                 <h3 className="font-display font-bold text-lg text-holo-100 tracking-wider">AURA</h3>
                 <span className="text-xs text-holo-400 uppercase tracking-widest flex items-center gap-1">
-                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Online
+                  <span className="w-2 h-2 bg-holo-400 rounded-full animate-pulse"></span> Local Mode
                 </span>
               </div>
             </div>
@@ -264,7 +277,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSendMessage(input)}
-                placeholder="Ask AURA about my skills, projects, history..."
+                placeholder="Ask AURA about projects, skills, history, education, certifications..."
                 className="flex-1 bg-holo-950/50 border border-holo-700 rounded p-2 text-holo-100 focus:outline-none focus:border-holo-400 placeholder-holo-700 font-mono text-sm"
               />
               <button

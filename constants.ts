@@ -11,7 +11,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
       github: "https://github.com/SatPaingOo"
     },
     location: "Thailand",
-    languagesSpoken: ["Burmese (Native)", "English (Fluent)"]
+    languagesSpoken: ["Burmese (Native)", "English (Fluent)", "Japanese (Basic)"]
   },
   skills: {
     coreLanguages: [
@@ -81,18 +81,23 @@ export const PORTFOLIO_DATA: PortfolioData = {
       duration: "January - April 2025"
     },
     {
+      institution: "Myanmar Management Institute",
+      degree: "Business Management Course",
+      duration: "June 2020 - August 2020"
+    },
+    {
       institution: "Myanmar IT Consulting",
-      degree: "basic learning programming html, css, javascript, bootstrap, wordpress, php, mysql, etc.",
+      degree: "Introductory Programming & Web Development (HTML, CSS, JavaScript, Bootstrap, WordPress, PHP, MySQL)",
       duration: "October - November 2018"
     },
     {
       institution: "Metro IT & Japanese Language Center",
-      degree: "IT Diploma & Japanese Language N4 Level",
+      degree: "IT Diploma (IT Fundamentals, Management, Technology & Programming Logic) and Japanese Language",
       duration: "2016 - 2018"
     },
     {
       institution: "Magway University",
-      degree: "B.A History",
+      degree: "Bachelor of Arts (History)",
       duration: "2010 - 2012"
     }
   ],

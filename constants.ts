@@ -3,8 +3,8 @@ import { PortfolioData } from './types';
 export const PORTFOLIO_DATA: PortfolioData = {
   personalInfo: {
     name: "Sat Paing Oo",
-    title: "Full Stack Developer (POS & E-Commerce Systems)",
-    summary: "Full stack developer with 5+ years of hands-on experience designing and building POS and e-commerce systems using React, Redux, Node.js, C#/.NET, .NET Core and Python on MS SQL Server, MySQL and Windows Server, with a strong focus on clean architecture and CI/CD automation.",
+    title: "Full Stack Developer (React, .NET & Node.js)",
+    summary: "Full stack developer with 5+ years of hands-on experience designing and building web, mobile, and desktop applications using React, Redux, Node.js, C#/.NET, .NET Core and Python on MS SQL Server, MySQL and Windows Server, with a strong focus on clean architecture and CI/CD automation.",
     contact: {
       email: "satpaingoo777@gmail.com",
       linkedin: "https://www.linkedin.com/in/satpaingoo777/",
@@ -39,7 +39,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
       {name: "CI/CD (GitHub Actions)", level: "Proficient"}
     ],
     specialty: [
-      {name: "POS & E-Commerce Systems", level: "Expert"},
+      {name: "Full Stack Web Applications", level: "Expert"},
       {name: "React & Redux SPA Architecture", level: "Expert"},
       {name: "Clean Architecture & Domain-Driven Design", level: "Proficient"},
       {name: "Database Design & Optimization (MS SQL, MySQL)", level: "Expert"},

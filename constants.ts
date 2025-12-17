@@ -49,13 +49,15 @@ export const PORTFOLIO_DATA: PortfolioData = {
   employmentHistory: [
     {
       company: "OMS Company (Thailand-based)",
-      position: "Full Stack Developer (POS & E-Commerce)",
+      position: "Full Stack Developer – POS & E‑Commerce Platforms",
       duration: "2019 - Present",
       responsibilities: [
-        "System design and develop POS and e-commerce systems for merchants and members using React, C#/.NET, MS SQL Server, and Bootstrap.",
-        "Implemented and supported AXTRA POS modules (inventory, inventory reports, floor plan, table reservation) from Myanmar between 2019 and 2024, then continued on-site/remote from Thailand from 2025 onward.",
-        "Collaborate with stakeholders in both Myanmar and Thailand to gather requirements and continuously improve system usability and performance.",
-        "2019 - Present (Myanmar: 2019 - 2024, Thailand: 2025 - Present)"
+        "Develop and maintain AXTRA POS and e‑commerce platforms for merchants and members using React, React Native, C#/.NET, MS SQL Server, and Bootstrap.",
+        "Implement and evolve core AXTRA POS modules including inventory management, inventory reporting, restaurant floor‑plan configuration, and table reservation/booking workflows.",
+        "Independently designed and developed the Local AXTRA Auto‑Deploy desktop application (React & Electron) that automates IIS site setup, SQL Server database creation/restore, and static IP/network configuration via batch and PowerShell scripts.",
+        "Develop a car showroom and test‑drive booking web application for automotive dealers, enabling them to upload vehicle listings, manage photos, and handle online enquiries and appointment requests.",
+        "Deliver and support AXTRA POS rollouts from Myanmar (2019–2024), then transition to a hybrid on‑site/remote role based in Thailand from 2025 onward.",
+        "Collaborate with stakeholders and on‑site teams in Myanmar and Thailand to gather requirements, refine deployment and operations workflows, and continuously improve system performance and usability."
       ]
     },
     {
@@ -108,20 +110,25 @@ export const PORTFOLIO_DATA: PortfolioData = {
       issuer: "Coursera / Meta"
     },
     {
-      name: "Certificate – Python Programming & Data Engineering (ETL, ELT, Data Pipeline)",
-      year: 2025,
-      issuer: "Myanmar Data Tech (MMDT)"
+      name: "Diploma in Information Technology & Japanese Language",
+      year: 2018,
+      issuer: "Metro IT & Japanese Language Center"
+    },
+    {
+      name: "Business Management Certificate",
+      year: 2020,
+      issuer: "Myanmar Management Institute"
     }
   ],
   projects: [
     {
       id: 1,
       title: "E-Commerce Platform for Axtra POS Merchants & Members",
-      role: "Full Stack Developer",
+      role: "Full Stack Developer – AXTRA POS & E‑Commerce Platform",
       technologies: ["React", "React Native", "Electron", "C#/.NET", "MS SQL Server", "Bootstrap"],
-      challenge: "Build a unified e-commerce and POS platform for merchants and members, including inventory, reporting, and table management for restaurants.",
-      solution: "Implemented web and mobile apps with React and React Native, a C#/.NET backend with MS SQL Server, covering inventory management, inventory reports, floor plan configuration, and table reservation/booking flows.",
-      metrics: "Improved inventory accuracy and reduced manual reconciliation time for merchants while enabling real-time table availability and reservation for customers.",
+      challenge: "Unify AXTRA POS with a modern e-commerce experience so merchants and members can manage products, orders, inventory, and restaurant table bookings across web, mobile, and in‑store channels.",
+      solution: "Implemented a multi-tenant web and mobile platform using React and React Native with a C#/.NET + MS SQL Server backend, integrating tightly with AXTRA POS for real-time inventory, reporting, floor-plan configuration, and table reservation/booking workflows.",
+      metrics: "Reduced manual data entry and reconciliation, improved inventory accuracy for merchants, and enabled real-time table availability and online booking for customers across Myanmar and Thailand.",
       links: {
         liveDemo: "https://shop.axtrapos.com/",
         github: null
@@ -130,11 +137,11 @@ export const PORTFOLIO_DATA: PortfolioData = {
     {
       id: 2,
       title: "Local AXTRA Auto-Deploy Application",
-      role: "Full Stack / DevOps Developer",
+      role: "Solo Full Stack / DevOps Engineer – AXTRA Deployment Tooling",
       technologies: ["React", "Electron", "Batch (.bat)", "PowerShell", "IIS", "MS SQL Server"],
-      challenge: "Reduce manual setup time and human error when deploying the local AXTRA application across Windows servers, including IIS site creation, SQL Server database setup, and static IP/network configuration.",
-      solution: "Built a desktop UI using React and Electron that guides operators through a few configuration fields, then automatically generates and executes bat and PowerShell scripts to install prerequisites, configure IIS, restore or create SQL Server databases, and apply static IP/network settings.",
-      metrics: "Cut local environment provisioning time from hours to minutes and standardized deployments to be reproducible with a single UI-driven workflow.",
+      challenge: "Eliminate slow and error‑prone manual installation of AXTRA POS local servers (IIS sites, SQL databases, and network configuration) at customer locations.",
+      solution: "Independently built a desktop deployment assistant with React and Electron that collects a few configuration inputs, then generates and runs batch/PowerShell scripts to install prerequisites, configure IIS sites, create/restore SQL Server databases, and apply static IP and network settings consistently.",
+      metrics: "Cut on‑site environment provisioning from hours to minutes, reduced configuration mistakes, and standardized AXTRA POS deployments into a repeatable, UI‑driven process.",
       links: {
         liveDemo: null,
         github: null

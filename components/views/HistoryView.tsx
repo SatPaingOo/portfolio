@@ -52,7 +52,7 @@ const HistoryView: React.FC = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.499 5.258 50.55 50.55 0 00-2.658.813m-15.482 0A50.917 50.917 0 0012 13.489a50.917 50.917 0 007.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
                     </svg>
                 </span>
-                <h3 className="text-2xl font-bold text-white ml-8 mb-6">Academic Database</h3>
+                <h3 className="text-2xl font-bold text-white ml-8 mb-6">Education & Training</h3>
                  {PORTFOLIO_DATA.education.map((edu, idx) => (
                     <div key={idx} className="ml-8 mb-8 relative group">
                          <div className="absolute -left-[41px] top-2 h-4 w-4 rounded-full bg-holo-950 border border-holo-500 group-hover:bg-holo-400 transition-colors"></div>
@@ -79,8 +79,10 @@ const HistoryView: React.FC = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5v4.25m0 0l-2.5-1.5m2.5 1.5l2.5-1.5" />
                     </svg>
                 </span>
-                <h3 className="text-2xl font-bold text-white ml-8 mb-6">Certifications</h3>
-                 {PORTFOLIO_DATA.certifications.map((cert, idx) => (
+                <h3 className="text-2xl font-bold text-white ml-8 mb-6">Certifications & Diplomas</h3>
+                 {[...PORTFOLIO_DATA.certifications]
+                    .sort((a, b) => (b.year || 0) - (a.year || 0))
+                    .map((cert, idx) => (
                     <div key={idx} className="ml-8 mb-8 relative group">
                          <div className="absolute -left-[41px] top-2 h-4 w-4 rounded-full bg-holo-950 border border-holo-500 group-hover:bg-holo-400 transition-colors"></div>
                         <div className="glass-panel p-6 rounded-lg border-l-4 border-l-emerald-500 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all">

@@ -13,24 +13,24 @@ const GalleryView: React.FC = () => {
     : photos.filter(p => p.category === selectedCategory);
 
   return (
-    <div className="w-full h-full overflow-y-auto p-4 md:p-10 pb-24">
-      <div className="max-w-7xl mx-auto">
-        <h2 className="text-4xl font-display font-bold text-white mb-2 holo-text-shadow">
+    <div className="w-full h-full overflow-y-auto overflow-x-hidden p-3 sm:p-4 md:p-10 pb-24">
+      <div className="max-w-7xl mx-auto px-2">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-white mb-2 holo-text-shadow">
           IMAGE ARCHIVE
         </h2>
-        <p className="text-holo-300 font-mono mb-8 border-l-2 border-holo-500 pl-4">
+        <p className="text-holo-300 font-mono mb-6 sm:mb-8 text-xs sm:text-sm border-l-2 border-holo-500 pl-3 sm:pl-4">
           // SCANNING MEDIA FILES...<br/>
           // {photos.length} IMAGES FOUND
         </p>
 
         {/* Category Filter */}
         {categories.length > 1 && (
-          <div className="flex flex-wrap gap-2 mb-8">
+          <div className="flex flex-wrap gap-2 mb-6 sm:mb-8">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded border transition-all font-mono text-sm ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded border transition-all font-mono text-xs sm:text-sm ${
                   selectedCategory === cat
                     ? 'bg-holo-500/30 border-holo-400 text-white'
                     : 'bg-holo-900/40 border-holo-700 text-holo-300 hover:border-holo-500'
@@ -44,7 +44,7 @@ const GalleryView: React.FC = () => {
 
         {/* Photo Grid */}
         {filteredPhotos.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredPhotos.map((photo) => (
               <div
                 key={photo.id}

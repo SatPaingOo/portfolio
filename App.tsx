@@ -48,11 +48,11 @@ const App: React.FC = () => {
                {PORTFOLIO_DATA.personalInfo.summary}
             </div>
 
-            <div className="flex gap-4 flex-wrap justify-center">
-               <button onClick={() => setCurrentView(ViewMode.PROJECTS)} className="px-6 py-2.5 md:px-8 md:py-3 bg-holo-900/50 border border-holo-500 hover:bg-holo-500 hover:text-white hover:scale-105 transition-all duration-300 rounded font-display tracking-widest uppercase text-sm md:text-base shadow-lg shadow-holo-500/20">
+            <div className="flex gap-3 sm:gap-4 flex-wrap justify-center px-4">
+               <button onClick={() => setCurrentView(ViewMode.PROJECTS)} className="px-4 sm:px-6 py-2 sm:py-2.5 md:px-8 md:py-3 bg-holo-900/50 border border-holo-500 hover:bg-holo-500 hover:text-white hover:scale-105 transition-all duration-300 rounded font-display tracking-widest uppercase text-xs sm:text-sm md:text-base shadow-lg shadow-holo-500/20">
                   View Projects
                </button>
-               <button onClick={() => setCurrentView(ViewMode.SKILLS)} className="px-6 py-2.5 md:px-8 md:py-3 bg-transparent border border-holo-700 hover:border-holo-400 hover:text-white hover:scale-105 text-holo-300 transition-all duration-300 rounded font-display tracking-widest uppercase text-sm md:text-base shadow-lg shadow-holo-500/20">
+               <button onClick={() => setCurrentView(ViewMode.SKILLS)} className="px-4 sm:px-6 py-2 sm:py-2.5 md:px-8 md:py-3 bg-transparent border border-holo-700 hover:border-holo-400 hover:text-white hover:scale-105 text-holo-300 transition-all duration-300 rounded font-display tracking-widest uppercase text-xs sm:text-sm md:text-base shadow-lg shadow-holo-500/20">
                   Tech Stack
                </button>
             </div>
@@ -62,19 +62,19 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden font-sans fixed inset-0">
+    <div className="relative w-full h-screen overflow-hidden font-sans fixed inset-0 max-w-full">
       <HoloBackground />
 
       {/* Top Navigation Bar */}
-      <nav className="fixed top-0 left-0 right-0 h-14 bg-black/60 backdrop-blur-md border-b border-holo-900/50 z-40 flex items-center justify-between px-4 md:px-10 shadow-lg shadow-black/20">
+      <nav className="fixed top-0 left-0 right-0 h-14 bg-black/60 backdrop-blur-md border-b border-holo-900/50 z-40 flex items-center justify-between px-3 sm:px-4 md:px-10 shadow-lg shadow-black/20">
         <div
-          className="flex flex-col leading-tight cursor-pointer"
+          className="flex flex-col leading-tight cursor-pointer min-w-0 flex-shrink"
           onClick={() => handleViewChange(ViewMode.HOME)}
         >
-          <span className="text-holo-400 font-display font-bold text-xl hover:text-white transition-colors">
+          <span className="text-holo-400 font-display font-bold text-base sm:text-lg md:text-xl hover:text-white transition-colors truncate">
             SPO.SYS
           </span>
-          <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-holo-700">
+          <span className="text-[8px] sm:text-[9px] font-mono uppercase tracking-[0.2em] sm:tracking-[0.3em] text-holo-700 truncate">
             Aura portfolio for Sat Paing Oo
           </span>
         </div>
@@ -110,13 +110,13 @@ const App: React.FC = () => {
         </button>
 
         {/* Desktop nav - hidden on mobile */}
-        <div className="hidden md:flex items-center gap-6">
-          <div className="flex gap-6">
+        <div className="hidden md:flex items-center gap-4 lg:gap-6 flex-shrink-0">
+          <div className="flex gap-3 lg:gap-6">
             {Object.values(ViewMode).map((mode) => (
               <button
                 key={mode}
                 onClick={() => handleViewChange(mode)}
-                className={`text-sm tracking-widest font-mono uppercase transition-all ${
+                className={`text-xs lg:text-sm tracking-widest font-mono uppercase transition-all whitespace-nowrap ${
                   currentView === mode
                     ? 'text-white border-b-2 border-holo-400'
                     : 'text-gray-500 hover:text-holo-300'
@@ -126,12 +126,12 @@ const App: React.FC = () => {
               </button>
             ))}
           </div>
-          <div className="flex items-center gap-3 pl-4 border-l border-holo-900/80">
+          <div className="flex items-center gap-2 lg:gap-3 pl-3 lg:pl-4 border-l border-holo-900/80">
             <a
               href={PORTFOLIO_DATA.personalInfo.contact.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs font-mono uppercase tracking-widest text-holo-300 hover:text-white transition-colors"
+              className="text-xs font-mono uppercase tracking-widest text-holo-300 hover:text-white transition-colors whitespace-nowrap"
             >
               LinkedIn
             </a>
@@ -139,7 +139,7 @@ const App: React.FC = () => {
               href={PORTFOLIO_DATA.personalInfo.contact.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs font-mono uppercase tracking-widest text-holo-300 hover:text-white transition-colors"
+              className="text-xs font-mono uppercase tracking-widest text-holo-300 hover:text-white transition-colors whitespace-nowrap"
             >
               GitHub
             </a>
@@ -157,7 +157,7 @@ const App: React.FC = () => {
 
       {/* Mobile sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full w-64 bg-black/95 backdrop-blur-md border-r border-holo-900/50 z-50 transform transition-transform duration-300 ease-in-out md:hidden ${
+        className={`fixed top-0 left-0 h-full w-[280px] max-w-[85vw] bg-black/95 backdrop-blur-md border-r border-holo-900/50 z-50 transform transition-transform duration-300 ease-in-out md:hidden ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -211,7 +211,7 @@ const App: React.FC = () => {
       </div>
 
       {/* Main Content Area */}
-      <main className="pt-14 w-full h-full relative overflow-y-auto">
+      <main className="pt-14 w-full h-full relative overflow-y-auto overflow-x-hidden">
         {renderView()}
       </main>
 

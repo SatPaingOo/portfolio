@@ -43,15 +43,11 @@ const HolographicHeadView: React.FC = () => {
   return (
     <div 
       ref={containerRef}
-      className="relative cursor-pointer z-10 transition-transform duration-500 ease-out"
+      className="relative cursor-pointer z-10 transition-transform duration-500 ease-out w-[180px] h-[180px] sm:w-[200px] sm:h-[200px] md:w-[240px] md:h-[240px] max-w-full"
       style={{ 
         perspective: '1000px',
-        width: '240px',
-        height: '240px',
-        minWidth: '240px',
-        minHeight: '240px',
         background: 'transparent',
-        transform: isHovered ? 'scale(1.25)' : 'scale(1)',
+        transform: isHovered ? 'scale(1.15) sm:scale(1.25)' : 'scale(1)',
         transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
       }}
       onMouseEnter={() => setIsHovered(true)}

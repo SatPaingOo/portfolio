@@ -210,33 +210,33 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
   };
 
   return (
-    <div className={`fixed bottom-4 right-4 z-50 transition-all duration-500 ease-in-out ${isOpen ? 'w-[90vw] md:w-[450px] h-[600px]' : 'w-16 h-16'}`}>
+    <div className={`fixed bottom-3 right-3 sm:bottom-4 sm:right-4 z-50 transition-all duration-500 ease-in-out ${isOpen ? 'w-[calc(100vw-24px)] sm:w-[90vw] md:w-[450px] max-w-[450px] h-[calc(100vh-120px)] sm:h-[500px] md:h-[600px] max-h-[600px]' : 'w-14 h-14 sm:w-16 sm:h-16'}`}>
       {isOpen ? (
         <div className="flex flex-col h-full glass-panel rounded-lg overflow-hidden border border-holo-500/50 shadow-[0_0_30px_rgba(0,171,209,0.3)]">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-holo-500/30 bg-black/40">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full border-2 border-holo-400 flex items-center justify-center relative bg-black">
+          <div className="flex items-center justify-between p-3 sm:p-4 border-b border-holo-500/30 bg-black/40 flex-shrink-0">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-holo-400 flex items-center justify-center relative bg-black flex-shrink-0">
                  {/* Simple Geometric Representation of Aura */}
-                 <div className="w-6 h-6 border border-holo-300 rotate-45 animate-spin-slow"></div>
-                 <div className="absolute w-4 h-4 bg-holo-400/60 blur-sm rounded-full animate-pulse"></div>
+                 <div className="w-5 h-5 sm:w-6 sm:h-6 border border-holo-300 rotate-45 animate-spin-slow"></div>
+                 <div className="absolute w-3 h-3 sm:w-4 sm:h-4 bg-holo-400/60 blur-sm rounded-full animate-pulse"></div>
               </div>
-              <div>
-                <h3 className="font-display font-bold text-lg text-holo-100 tracking-wider">AURA</h3>
-                <span className="text-xs text-holo-400 uppercase tracking-widest flex items-center gap-1">
-                  <span className="w-2 h-2 bg-holo-400 rounded-full animate-pulse"></span> Local Mode
+              <div className="min-w-0">
+                <h3 className="font-display font-bold text-base sm:text-lg text-holo-100 tracking-wider truncate">AURA</h3>
+                <span className="text-[10px] sm:text-xs text-holo-400 uppercase tracking-widest flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-holo-400 rounded-full animate-pulse flex-shrink-0"></span> <span className="truncate">Local Mode</span>
                 </span>
               </div>
             </div>
-            <button onClick={() => setIsOpen(false)} className="text-holo-400 hover:text-white transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+            <button onClick={() => setIsOpen(false)} className="text-holo-400 hover:text-white transition-colors flex-shrink-0 p-1">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 sm:w-6 sm:h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
               </svg>
             </button>
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 font-mono text-sm">
+          <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 font-mono text-xs sm:text-sm min-h-0">
             {messages.map((msg) => (
               <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] p-3 rounded-lg ${msg.role === 'user' ? 'bg-holo-900/50 border border-holo-700 text-holo-50' : 'bg-black/40 border border-holo-500/30 text-holo-100'}`}>
@@ -270,20 +270,20 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
           </div>
 
           {/* Input */}
-          <div className="p-3 bg-black/40 border-t border-holo-500/30">
-            <div className="flex gap-2">
+          <div className="p-2 sm:p-3 bg-black/40 border-t border-holo-500/30 flex-shrink-0">
+            <div className="flex gap-1.5 sm:gap-2">
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSendMessage(input)}
-                placeholder="Ask AURA about projects, skills, history, education, certifications..."
-                className="flex-1 bg-holo-950/50 border border-holo-700 rounded p-2 text-holo-100 focus:outline-none focus:border-holo-400 placeholder-holo-700 font-mono text-sm"
+                placeholder="Ask AURA..."
+                className="flex-1 bg-holo-950/50 border border-holo-700 rounded p-1.5 sm:p-2 text-holo-100 focus:outline-none focus:border-holo-400 placeholder-holo-700 font-mono text-xs sm:text-sm min-w-0"
               />
               <button
                 onClick={() => handleSendMessage(input)}
                 disabled={isLoading || !input.trim()}
-                className="px-4 bg-holo-800 hover:bg-holo-600 text-white rounded border border-holo-500 transition-colors disabled:opacity-50"
+                className="px-2 sm:px-4 bg-holo-800 hover:bg-holo-600 text-white rounded border border-holo-500 transition-colors disabled:opacity-50 text-xs sm:text-sm whitespace-nowrap flex-shrink-0"
               >
                 SEND
               </button>

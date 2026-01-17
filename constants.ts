@@ -15,35 +15,40 @@ export const PORTFOLIO_DATA: PortfolioData = {
   },
   skills: {
     coreLanguages: [
-      {name: "JavaScript/TypeScript", level: "Expert"},
-      {name: "C#", level: "Expert"},
-      {name: "Python", level: "Proficient"}
+      { name: "JavaScript/TypeScript", level: "Expert" },
+      { name: "C#", level: "Expert" },
+      { name: "Python", level: "Proficient" }
     ],
     frontendFrameworks: [
-      {name: "React", level: "Expert"},
-      {name: "React Native", level: "Familiar"},
-      {name: "Electron", level: "Familiar"},
-      {name: "Next.js", level: "Proficient"},
-      {name: "Redux/Zustand", level: "Proficient"},
-      {name: "Bootstrap", level: "Expert"},
-      {name: "Tailwind CSS", level: "Familiar"},
+      { name: "React", level: "Expert" },
+      { name: "React Native", level: "Familiar" },
+      { name: "Electron", level: "Familiar" },
+      { name: "Next.js", level: "Proficient" },
+      { name: "Vite", level: "Proficient" },
+      { name: "Redux/Zustand", level: "Proficient" },
+      { name: "Bootstrap", level: "Expert" },
+      { name: "Tailwind CSS", level: "Proficient" },
+      { name: "Framer Motion", level: "Familiar" },
+      { name: "React Router", level: "Expert" },
     ],
     backendAndDevOps: [
-      {name: "Node.js", level: "Expert"},
-      {name: "C# / .NET", level: "Expert"},
-      {name: ".NET Core", level: "Expert"},
-      {name: "Python", level: "Proficient"},
-      {name: "MS SQL Server", level: "Expert"},
-      {name: "MySQL", level: "Proficient"},
-      {name: "Windows Server", level: "Proficient"},
-      {name: "CI/CD (GitHub Actions)", level: "Familiar"}
+      { name: "Node.js", level: "Expert" },
+      { name: "C# / .NET", level: "Expert" },
+      { name: ".NET Core", level: "Expert" },
+      { name: "Python", level: "Proficient" },
+      { name: "Firebase", level: "Proficient" },
+      { name: "MS SQL Server", level: "Expert" },
+      { name: "MySQL", level: "Proficient" },
+      { name: "Windows Server", level: "Proficient" },
+      { name: "CI/CD (GitHub Actions)", level: "Familiar" }
     ],
     specialty: [
-      {name: "Full Stack Web Applications", level: "Expert"},
-      {name: "React & Redux SPA Architecture", level: "Expert"},
-      {name: "Clean Architecture & Domain-Driven Design", level: "Proficient"},
-      {name: "Database Design & Optimization (MS SQL, MySQL)", level: "Expert"},
-      {name: "Continuous Integration & Delivery", level: "Proficient"}
+      { name: "Full Stack Web Applications", level: "Expert" },
+      { name: "React & Redux SPA Architecture", level: "Expert" },
+      { name: "AI Integration (Gemini AI)", level: "Proficient" },
+      { name: "Clean Architecture & Domain-Driven Design", level: "Proficient" },
+      { name: "Database Design & Optimization (MS SQL, MySQL)", level: "Expert" },
+      { name: "Continuous Integration & Delivery", level: "Proficient" }
     ]
   },
   employmentHistory: [
@@ -171,6 +176,32 @@ export const PORTFOLIO_DATA: PortfolioData = {
       links: {
         liveDemo: null,
         github: "https://github.com/SatPaingOo/football-data-project.git"
+      }
+    },
+    {
+      id: 5,
+      title: "Karmic Mirror - Cosmic Blueprint Reflection Platform",
+      role: "Full Stack Developer – Astrology & Numerology Web Application",
+      technologies: ["React", "TypeScript", "Vite", "Firebase", "Firestore", "Tailwind CSS", "Gemini AI", "html2canvas", "React Router"],
+      challenge: "Create an intuitive, bilingual web application that combines Myanmar Mahabote astrology, Western Numerology, and AI-powered insights to provide users with personalized cosmic blueprint reflections and compatibility analysis, while maintaining cultural authenticity and modern UX design.",
+      solution: "Built a client-side React application with Vite that integrates Myanmar Mahabote chart calculations (7 houses), Western Numerology (Birth Day # and Life Path #), Western/Chinese Zodiac compatibility analysis, and optional Gemini AI Oracle readings (quick/deep modes). Implemented comprehensive bilingual support (English/Myanmar) with dynamic content switching, Firebase Firestore for visitor tracking, analytics, and user feedback collection. Developed image export functionality using html2canvas for shareable Magic Cards (Identity Cards, Vibe Cards, Sync Cards) and created a multi-route system for detailed zodiac, numerology, and day sign pages with rich content management.",
+      metrics: "Delivered a production-ready astrology platform deployed on Firebase Hosting with real-time visitor analytics, daily statistics tracking, user feedback system with rating and categorization, and seamless AI integration. Enabled users to generate personalized cosmic insights, compatibility scores, and shareable visual cards while providing deep Oracle readings through AI-powered analysis. Implemented comprehensive tracking for visitor behavior, calculation patterns, card downloads, and feature usage to support data-driven improvements.",
+      links: {
+        liveDemo: "https://karmic-mirror.web.app/",
+        github: null
+      }
+    },
+    {
+      id: 6,
+      title: "VaultGuard Pro - Neural Security Operations Center",
+      role: "Solo Full Stack Developer – AI-Powered Security Scanner",
+      technologies: ["React", "TypeScript", "Vite", "Gemini 3 Pro/Flash", "Google AI Studio", "Tailwind CSS", "jsPDF", "Leaflet", "Framer Motion", "React Router"],
+      challenge: "Build a frontend-only Security Operations Center (SOC) that performs comprehensive vulnerability scanning without requiring backend infrastructure, using AI-powered analysis to overcome browser security limitations and provide enterprise-grade security assessments with real-time CVE database cross-referencing.",
+      solution: "Developed a pure frontend React application leveraging Google Gemini 3 Pro (32,768 token thinking budget) and Flash models for neural vulnerability analysis. Implemented multi-tier scanning system (FAST/STANDARD/DEEP) with parallel data collection (DOM, OSINT, Headers, SSL, DNS), real-time CVE cross-referencing via Google Search Grounding, automatic PII masking, and comprehensive security reporting. Created Vault Academy - an integrated educational knowledge base with multi-language support (EN/MM) for OWASP Top 10, CVE, SSL/TLS, DNS, Headers, and Tech DNA security topics. Built SOC-grade PDF export functionality with 100% UI-to-PDF content synchronization, real-time telemetry logging, confidence-based vulnerability reporting, and automated retry logic with exponential backoff. Implemented batch probe execution (3 at a time), response caching (SSL/DNS cached for 24h/1h), and tier-based data transmission to optimize token usage by 30-50%.",
+      metrics: "Delivered a production-ready security scanner deployed on Vercel (https://vaultguard-pro.vercel.app/) with 2-3x faster data collection through parallel execution (5-8s vs 15-20s), 30-50% token reduction via tier-based optimization, and comprehensive vulnerability detection including OWASP Top 10, technology stack DNA mapping, forensic logic chaining, and business logic flaw detection. Achieved ~95-100% scan accuracy with CORS extension support, with AI compensation mode providing ~60-70% accuracy for standard browser usage. Reduced total scan times by 25-40% (FAST: 20-30s, STANDARD: 40-60s, DEEP: 90-150s) and achieved 30-40% cost savings through smart caching and optimized data transmission. Implemented real-time mission telemetry, data quality assessment with trust scores, and comprehensive vulnerability ledger with full remediation directives.",
+      links: {
+        liveDemo: "https://vaultguard-pro.vercel.app/",
+        github: "https://github.com/SatPaingOo/VAULTGUARD_PRO.git"
       }
     },
   ],

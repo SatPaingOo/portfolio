@@ -3,8 +3,8 @@ import { PortfolioData } from './types';
 export const PORTFOLIO_DATA: PortfolioData = {
   personalInfo: {
     name: "Sat Paing Oo",
-    title: "Full Stack Developer (React, .NET & Node.js)",
-    summary: "Full stack developer with 5+ years of hands-on experience designing and building web, mobile, and desktop applications using React, Redux, Node.js, C#/.NET, .NET Core and Python on MS SQL Server, MySQL and Windows Server, with a strong focus on clean architecture and CI/CD automation.",
+    title: "Full Stack Software Engineer (React, .NET & Node.js)",
+    summary: "Full stack software engineer with 5+ years of hands-on experience designing and building web, mobile, and desktop applications using React, Redux, Node.js, C#/.NET, .NET Core and Python on MS SQL Server, MySQL and Windows Server, with a strong focus on clean architecture and CI/CD automation.",
     contact: {
       email: "satpaingoo777@gmail.com",
       linkedin: "https://www.linkedin.com/in/satpaingoo777/",
@@ -54,7 +54,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
   employmentHistory: [
     {
       company: "OMS Company (Thailand-based)",
-      position: "Full Stack Developer – POS & E‑Commerce Platforms",
+      position: "Full Stack Software Engineer – POS & E‑Commerce Platforms",
       duration: "2019 - Present",
       responsibilities: [
         "Develop and maintain AXTRA POS and e‑commerce platforms for merchants and members using React, React Native, C#/.NET, MS SQL Server, and Bootstrap.",
@@ -129,7 +129,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
     {
       id: 1,
       title: "E-Commerce Platform for Axtra POS Merchants & Members",
-      role: "Full Stack Developer – AXTRA POS & E‑Commerce Platform",
+      role: "Full Stack Software Engineer – AXTRA POS & E‑Commerce Platform",
       technologies: ["React", "React Native", "Electron", "C#/.NET", "MS SQL Server", "Bootstrap"],
       challenge: "Unify AXTRA POS with a modern e-commerce experience so merchants and members can manage products, orders, inventory, and restaurant table bookings across web, mobile, and in‑store channels.",
       solution: "Implemented a multi-tenant web and mobile platform using React and React Native with a C#/.NET + MS SQL Server backend, integrating tightly with AXTRA POS for real-time inventory, reporting, floor-plan configuration, and table reservation/booking workflows.",
@@ -181,7 +181,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
     {
       id: 5,
       title: "Karmic Mirror - Cosmic Blueprint Reflection Platform",
-      role: "Full Stack Developer – Astrology & Numerology Web Application",
+      role: "Full Stack Software Engineer – Astrology & Numerology Web Application",
       technologies: ["React", "TypeScript", "Vite", "Firebase", "Firestore", "Tailwind CSS", "Gemini AI", "html2canvas", "React Router"],
       challenge: "Create an intuitive, bilingual web application that combines Myanmar Mahabote astrology, Western Numerology, and AI-powered insights to provide users with personalized cosmic blueprint reflections and compatibility analysis, while maintaining cultural authenticity and modern UX design.",
       solution: "Built a client-side React application with Vite that integrates Myanmar Mahabote chart calculations (7 houses), Western Numerology (Birth Day # and Life Path #), Western/Chinese Zodiac compatibility analysis, and optional Gemini AI Oracle readings (quick/deep modes). Implemented comprehensive bilingual support (English/Myanmar) with dynamic content switching, Firebase Firestore for visitor tracking, analytics, and user feedback collection. Developed image export functionality using html2canvas for shareable Magic Cards (Identity Cards, Vibe Cards, Sync Cards) and created a multi-route system for detailed zodiac, numerology, and day sign pages with rich content management.",
@@ -194,7 +194,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
     {
       id: 6,
       title: "VaultGuard Pro - Neural Security Operations Center",
-      role: "Solo Full Stack Developer – AI-Powered Security Scanner",
+      role: "Solo Full Stack Software Engineer – AI-Powered Security Scanner",
       technologies: ["React", "TypeScript", "Vite", "Gemini 3 Pro/Flash", "Google AI Studio", "Tailwind CSS", "jsPDF", "Leaflet", "Framer Motion", "React Router"],
       challenge: "Build a frontend-only Security Operations Center (SOC) that performs comprehensive vulnerability scanning without requiring backend infrastructure, using AI-powered analysis to overcome browser security limitations and provide enterprise-grade security assessments with real-time CVE database cross-referencing.",
       solution: "Developed a pure frontend React application leveraging Google Gemini 3 Pro (32,768 token thinking budget) and Flash models for neural vulnerability analysis. Implemented multi-tier scanning system (FAST/STANDARD/DEEP) with parallel data collection (DOM, OSINT, Headers, SSL, DNS), real-time CVE cross-referencing via Google Search Grounding, automatic PII masking, and comprehensive security reporting. Created Vault Academy - an integrated educational knowledge base with multi-language support (EN/MM) for OWASP Top 10, CVE, SSL/TLS, DNS, Headers, and Tech DNA security topics. Built SOC-grade PDF export functionality with 100% UI-to-PDF content synchronization, real-time telemetry logging, confidence-based vulnerability reporting, and automated retry logic with exponential backoff. Implemented batch probe execution (3 at a time), response caching (SSL/DNS cached for 24h/1h), and tier-based data transmission to optimize token usage by 30-50%.",

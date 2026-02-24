@@ -187,7 +187,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
       solution: "Built a client-side React application with Vite that integrates Myanmar Mahabote chart calculations (7 houses), Western Numerology (Birth Day # and Life Path #), Western/Chinese Zodiac compatibility analysis, and optional Gemini AI Oracle readings (quick/deep modes). Implemented comprehensive bilingual support (English/Myanmar) with dynamic content switching, Firebase Firestore for visitor tracking, analytics, and user feedback collection. Developed image export functionality using html2canvas for shareable Magic Cards (Identity Cards, Vibe Cards, Sync Cards) and created a multi-route system for detailed zodiac, numerology, and day sign pages with rich content management.",
       metrics: "Delivered a production-ready astrology platform deployed on Firebase Hosting with real-time visitor analytics, daily statistics tracking, user feedback system with rating and categorization, and seamless AI integration. Enabled users to generate personalized cosmic insights, compatibility scores, and shareable visual cards while providing deep Oracle readings through AI-powered analysis. Implemented comprehensive tracking for visitor behavior, calculation patterns, card downloads, and feature usage to support data-driven improvements.",
       links: {
-        liveDemo: "https://karmic-mirror.web.app/",
+        liveDemo: "https://www.karmicmirror.app/",
         github: null
       }
     },

@@ -22,6 +22,18 @@ export default defineConfig(({ mode }) => {
     },
     esbuild: {
       drop: mode === 'production' ? ['console', 'debugger'] : [],
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'react-vendor': ['react', 'react-dom'],
+            'three-vendor': ['three', '@react-three/fiber', '@react-three/drei'],
+            'chart-vendor': ['recharts']
+          }
+        }
+      },
+      chunkSizeWarningLimit: 1000
     }
   };
 });

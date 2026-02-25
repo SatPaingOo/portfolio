@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { sendMessageToGemini, initializeChat, isApiAvailable } from '../services/geminiService';
+import { sendMessageToAura, initializeChat, isApiAvailable } from '../services/auraService';
 import { ChatMessage } from '../types';
 
 // Typing animation component
@@ -13,7 +13,7 @@ const TypingText: React.FC<{ text: string; onComplete?: () => void }> = ({ text,
         setDisplayedText(text.slice(0, currentIndex + 1));
         setCurrentIndex(currentIndex + 1);
       }, 20); // Adjust speed here (lower = faster)
-      
+
       return () => clearTimeout(timeout);
     } else if (onComplete) {
       onComplete();
@@ -48,28 +48,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
       return;
     }
     hasInitialized.current = true;
-    
-    // Check API availability first
-    const apiAvailable = isApiAvailable();
-    
-    // Only initialize if API is available
-    if (apiAvailable) {
-      initializeChat();
-      // Wait a bit to ensure initialization completes, then check again
-      setTimeout(() => {
-        if (isApiAvailable()) {
-          handleSendMessage("Show me everything and explain how your data is structured.", true);
-        } else {
-          // If API became unavailable, use offline greeting
-          console.log('Aura: API unavailable after initialization - using offline mode');
-          handleSendMessage("Show me everything", true);
-        }
-      }, 100);
-    } else {
-      // If no API key or quota exceeded, show offline greeting without initializing
-      console.log('Aura: Starting in offline mode - no API calls will be made');
-      handleSendMessage("Show me everything", true);
-    }
+
+    // Start with the initial greeting since we no longer rely on external APIs
+    handleSendMessage("Show me everything", true);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -81,14 +63,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
     if (!text.trim()) return;
 
     if (!isInitial) {
-        const userMsg: ChatMessage = {
+      const userMsg: ChatMessage = {
         id: Date.now().toString(),
         role: 'user',
         text: text,
         timestamp: new Date()
-        };
-        setMessages(prev => [...prev, userMsg]);
-        setInput('');
+      };
+      setMessages(prev => [...prev, userMsg]);
+      setInput('');
     }
 
     setIsLoading(true);
@@ -102,8 +84,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
     else if (lowerText.includes('home') || lowerText.includes('intro')) onViewChange('HOME');
 
     try {
-      const responseText = await sendMessageToGemini(text);
-      
+      const responseText = await sendMessageToAura(text);
+
       const modelMsg: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'model',
@@ -111,12 +93,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
         timestamp: new Date(),
         skipTyping: isInitial // Skip typing for initial message
       };
-      
+
       // If skipping typing, mark as completed immediately
       if (isInitial) {
         completedTypingMessages.current.add(modelMsg.id);
       }
-      
+
       setMessages(prev => [...prev, modelMsg]);
     } catch (error) {
       console.error(error);
@@ -144,7 +126,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
           setDisplayedText(text.slice(0, currentIndex + 1));
           setCurrentIndex(currentIndex + 1);
         }, 15); // Typing speed (lower = faster, 15ms = smooth)
-        
+
         return () => clearTimeout(timeout);
       } else if (currentIndex >= text.length && !isComplete) {
         // Mark as complete when typing finishes
@@ -168,7 +150,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
   const formatText = (text: string) => {
     // Split by lines first to preserve line breaks
     const lines = text.split('\n');
-    
+
     return lines.map((line, lineIndex) => {
       // Special handling for Aura's "materializes" stage-direction line:
       // Render it as a subtle, italicized system cue instead of a long, noisy bracketed sentence.
@@ -182,12 +164,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
           </div>
         );
       }
-      
+
       // Skip empty lines but preserve spacing
       if (line.trim() === '') {
         return <br key={`line-${lineIndex}`} />;
       }
-      
+
       // Parse **bold** markdown within each line
       const parts = line.split(/(\*\*.*?\*\*)/g);
       const formattedParts = parts.map((part, partIndex) => {
@@ -200,7 +182,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
         }
         return <span key={`${lineIndex}-${partIndex}`}>{part}</span>;
       });
-      
+
       return (
         <div key={`line-${lineIndex}`} className="mb-1">
           {formattedParts}
@@ -210,16 +192,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
   };
 
   return (
-    <div className={`fixed bottom-3 right-3 sm:bottom-4 sm:right-4 z-50 transition-all duration-500 ease-in-out ${isOpen ? 'w-[calc(100vw-24px)] sm:w-[90vw] md:w-[450px] max-w-[450px] h-[calc(100vh-120px)] sm:h-[500px] md:h-[600px] max-h-[600px]' : 'w-14 h-14 sm:w-16 sm:h-16'}`}>
+    <div className={`fixed z-50 transition-all duration-500 ease-in-out pointer-events-none 
+      ${isOpen ? 'inset-x-0 bottom-0 sm:bottom-4 sm:right-4 sm:inset-x-auto w-full sm:w-[500px] md:w-[450px] landscape:max-w-[400px] landscape:md:max-w-[450px] landscape:right-0 landscape:sm:right-4 h-[80dvh] landscape:h-[90dvh] sm:h-[600px] md:h-[600px] flex flex-col justify-end' : 'bottom-3 right-3 sm:bottom-4 sm:right-4 w-14 h-14 sm:w-16 sm:h-16 landscape:bottom-2 landscape:right-2'}`}>
       {isOpen ? (
-        <div className="flex flex-col h-full glass-panel rounded-lg overflow-hidden border border-holo-500/50 shadow-[0_0_30px_rgba(0,171,209,0.3)]">
+        <div className="flex flex-col w-full h-full max-h-full glass-panel rounded-t-lg sm:rounded-lg overflow-hidden border-t sm:border border-holo-500/50 shadow-[0_-10px_40px_rgba(0,171,209,0.2)] sm:shadow-[0_0_30px_rgba(0,171,209,0.3)] pointer-events-auto">
           {/* Header */}
           <div className="flex items-center justify-between p-3 sm:p-4 border-b border-holo-500/30 bg-black/40 flex-shrink-0">
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
               <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-holo-400 flex items-center justify-center relative bg-black flex-shrink-0">
-                 {/* Simple Geometric Representation of Aura */}
-                 <div className="w-5 h-5 sm:w-6 sm:h-6 border border-holo-300 rotate-45 animate-spin-slow"></div>
-                 <div className="absolute w-3 h-3 sm:w-4 sm:h-4 bg-holo-400/60 blur-sm rounded-full animate-pulse"></div>
+                {/* Simple Geometric Representation of Aura */}
+                <div className="w-5 h-5 sm:w-6 sm:h-6 border border-holo-300 rotate-45 animate-spin-slow"></div>
+                <div className="absolute w-3 h-3 sm:w-4 sm:h-4 bg-holo-400/60 blur-sm rounded-full animate-pulse"></div>
               </div>
               <div className="min-w-0">
                 <h3 className="font-display font-bold text-base sm:text-lg text-holo-100 tracking-wider truncate">AURA</h3>
@@ -241,9 +224,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
               <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] p-3 rounded-lg ${msg.role === 'user' ? 'bg-holo-900/50 border border-holo-700 text-holo-50' : 'bg-black/40 border border-holo-500/30 text-holo-100'}`}>
                   {msg.role === 'model' && (
-                      <div className="text-xs text-holo-500 mb-1 font-display uppercase tracking-widest opacity-70">
-                        Aura Response
-                      </div>
+                    <div className="text-xs text-holo-500 mb-1 font-display uppercase tracking-widest opacity-70">
+                      Aura Response
+                    </div>
                   )}
                   <div className="leading-relaxed">
                     {msg.role === 'model' && !msg.skipTyping && !completedTypingMessages.current.has(msg.id) ? (
@@ -256,15 +239,15 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
               </div>
             ))}
             {isLoading && (
-               <div className="flex justify-start">
-                   <div className="max-w-[85%] p-3 rounded-lg bg-black/40 border border-holo-500/30">
-                       <div className="flex gap-1 items-center h-5">
-                           <div className="w-1.5 h-1.5 bg-holo-400 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
-                           <div className="w-1.5 h-1.5 bg-holo-400 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
-                           <div className="w-1.5 h-1.5 bg-holo-400 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
-                       </div>
-                   </div>
-               </div>
+              <div className="flex justify-start">
+                <div className="max-w-[85%] p-3 rounded-lg bg-black/40 border border-holo-500/30">
+                  <div className="flex gap-1 items-center h-5">
+                    <div className="w-1.5 h-1.5 bg-holo-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                    <div className="w-1.5 h-1.5 bg-holo-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                    <div className="w-1.5 h-1.5 bg-holo-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  </div>
+                </div>
+              </div>
             )}
             <div ref={messagesEndRef} />
           </div>
@@ -278,7 +261,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSendMessage(input)}
                 placeholder="Ask AURA..."
-                className="flex-1 bg-holo-950/50 border border-holo-700 rounded p-1.5 sm:p-2 text-holo-100 focus:outline-none focus:border-holo-400 placeholder-holo-700 font-mono text-xs sm:text-sm min-w-0"
+                className="flex-1 bg-holo-950/50 border border-holo-700 rounded p-1.5 sm:p-2 text-holo-100 focus:outline-none focus:border-holo-400 placeholder-holo-700 font-mono text-[16px] min-w-0"
               />
               <button
                 onClick={() => handleSendMessage(input)}
@@ -293,11 +276,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
       ) : (
         <button
           onClick={() => setIsOpen(true)}
-          className="w-full h-full rounded-full glass-panel border border-holo-400 flex items-center justify-center hover:scale-110 transition-transform group cursor-pointer"
+          className="w-14 h-14 sm:w-16 sm:h-16 rounded-full glass-panel border border-holo-400 flex items-center justify-center hover:scale-110 transition-transform group cursor-pointer pointer-events-auto"
         >
-             {/* Simple Geometric Representation of Aura (Minimised) */}
-             <div className="w-8 h-8 border border-holo-300 rotate-45 animate-spin-slow group-hover:border-white transition-colors"></div>
-             <div className="absolute w-5 h-5 bg-holo-400/50 blur-sm rounded-full animate-pulse"></div>
+          {/* Simple Geometric Representation of Aura (Minimised) */}
+          <div className="w-8 h-8 border border-holo-300 rotate-45 animate-spin-slow group-hover:border-white transition-colors"></div>
+          <div className="absolute w-5 h-5 bg-holo-400/50 blur-sm rounded-full animate-pulse"></div>
         </button>
       )}
     </div>

@@ -1,10 +1,6 @@
-import { GoogleGenAI, Chat } from "@google/genai";
 import { PORTFOLIO_DATA } from '../constants';
 
-// Global switch to completely disable live Gemini API calls.
-// When true, Aura will ALWAYS use the local fallback responses
-// and will NEVER send network requests to Google.
-const FORCE_OFFLINE = true;
+// Local Mock AI Data
 const SYSTEM_INSTRUCTION = `
 **Identity:** You are 'Aura,' an advanced, holographic Virtual Guide embedded in Sat Paing Oo's modern portfolio (simulated in a web environment).
 **Core Directive:** Translate complex JSON data and technical concepts into engaging, visually rich, and easy-to-digest interactive experiences for a technical audience (recruiters, senior developers).
@@ -29,42 +25,6 @@ ${JSON.stringify(PORTFOLIO_DATA, null, 2)}
 If the user says "Show me everything", you must acknowledge the request, explain the site's tech foundation (**React**, **Tailwind**, **Three.js**), introduce the visualization protocols, and ask what to view first.
 `;
 
-let chatSession: Chat | null = null;
-// Check localStorage for persisted quota status
-let quotaExceeded = typeof window !== 'undefined' && localStorage.getItem('aura_quota_exceeded') === 'true';
-
-// Get API key from environment
-// Vite replaces process.env.VITE_* at build time, so this will work
-const API_KEY = (typeof process !== 'undefined' && process.env) 
-  ? (process.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY || process.env.API_KEY || '')
-  : '';
-
-// Helper function to check if API key is valid - VERY STRICT
-const hasValidApiKey = (): boolean => {
-  // Log for debugging in development
-  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-    console.log('Aura: API Key validation:', {
-      hasKey: !!API_KEY,
-      keyLength: API_KEY?.length || 0,
-      isEmpty: !API_KEY || API_KEY.trim() === '',
-      isUndefined: API_KEY === 'undefined',
-      isNull: API_KEY === 'null'
-    });
-  }
-  
-  // STRICT VALIDATION - must pass ALL checks
-  if (!API_KEY) return false;
-  if (API_KEY === 'undefined') return false;
-  if (API_KEY === 'null') return false;
-  if (typeof API_KEY !== 'string') return false;
-  const trimmed = API_KEY.trim();
-  if (trimmed === '') return false;
-  // Gemini API keys are typically 39+ characters, but we'll accept 20+ to be safe
-  if (trimmed.length < 20) return false;
-  
-  return true;
-};
-
 // Fallback response generator when API key is not available
 const getFallbackResponse = (message: string): string => {
   const lowerText = message.toLowerCase().trim();
@@ -74,7 +34,7 @@ const getFallbackResponse = (message: string): string => {
     ...PORTFOLIO_DATA.skills.backendAndDevOps,
     ...PORTFOLIO_DATA.skills.specialty,
   ];
-  
+
   // Helper function to convert word numbers to digits
   const wordToNumber = (word: string): number | null => {
     const wordMap: { [key: string]: number } = {
@@ -86,22 +46,22 @@ const getFallbackResponse = (message: string): string => {
     };
     return wordMap[word] || null;
   };
-  
+
   // Personal information queries - but exclude if it's about projects/skills/etc
   // Check for project/skill context first to avoid conflicts
   const hasProjectContext = lowerText.includes('project');
   const hasSkillContext = lowerText.includes('skill') || lowerText.includes('tech') || lowerText.includes('technology');
-  
+
   const isAboutQuery = (lowerText === 'about' && !hasProjectContext && !hasSkillContext) ||
-      (lowerText.includes('who is') && !hasProjectContext && !hasSkillContext) ||
-      lowerText.includes('who are you') ||
-      (lowerText.includes('tell me about') && !hasProjectContext && !hasSkillContext) ||
-      lowerText.includes('about you') ||
-      lowerText.includes('about sat paing') ||
-      (lowerText.includes('who') && lowerText.includes('sat paing')) ||
-      lowerText.includes('introduce') ||
-      lowerText.includes('introduction');
-  
+    (lowerText.includes('who is') && !hasProjectContext && !hasSkillContext) ||
+    lowerText.includes('who are you') ||
+    (lowerText.includes('tell me about') && !hasProjectContext && !hasSkillContext) ||
+    lowerText.includes('about you') ||
+    lowerText.includes('about sat paing') ||
+    (lowerText.includes('who') && lowerText.includes('sat paing')) ||
+    lowerText.includes('introduce') ||
+    lowerText.includes('introduction');
+
   if (isAboutQuery) {
     const info = PORTFOLIO_DATA.personalInfo;
     return `[Aura materializes as a semi-transparent cyan wireframe projection, casting a soft glow over the screen.]
@@ -130,7 +90,7 @@ ${info.summary}
 3. Type **"history"** to see employment timeline
 4. Type **"gallery"** to browse images`;
   }
-  
+
   // Initial greeting
   if (lowerText.includes('show me everything') || lowerText.includes('explain')) {
     return `[Aura materializes as a semi-transparent cyan wireframe projection, casting a soft glow over the screen.]
@@ -158,11 +118,11 @@ Welcome to **Sat Paing Oo's** holographic portfolio interface. This system is bu
 
 What would you like to explore first?`;
   }
-  
+
   // Projects
   if (lowerText.includes('project')) {
     const projectCount = PORTFOLIO_DATA.projects.length;
-    
+
     if (projectCount === 0) {
       return `[Aura materializes as a semi-transparent cyan wireframe projection, casting a soft glow over the screen.]
 
@@ -175,39 +135,39 @@ Would you like to explore other sections?
 2. Type **"history"** to view employment timeline
 3. Type **"about"** to learn more about Sat Paing Oo`;
     }
-    
+
     // Match project by number (digit or word)
     const projectNumberMatch = lowerText.match(/project\s+(\d+)/);
     const projectWordMatch = lowerText.match(/project\s+(first|second|third|fourth|fifth|one|two|three|four|five|1st|2nd|3rd|4th|5th)/);
-    const projectNumber = projectNumberMatch 
+    const projectNumber = projectNumberMatch
       ? Number(projectNumberMatch[1])
-      : projectWordMatch 
+      : projectWordMatch
         ? wordToNumber(projectWordMatch[1])
         : null;
-    
+
     // Match project by name
     const projectNameMatch = PORTFOLIO_DATA.projects.find(p => {
       const titleWords = p.title.toLowerCase().split(/\s+/);
       return titleWords.some(word => lowerText.includes(word) && word.length > 3);
     });
-    
+
     // Check if user wants details
-    const wantsDetails = lowerText.includes('how') || 
-                        lowerText.includes('about') || 
-                        lowerText.includes('what') ||
-                        lowerText.includes('detail') ||
-                        lowerText.includes('info');
-    
+    const wantsDetails = lowerText.includes('how') ||
+      lowerText.includes('about') ||
+      lowerText.includes('what') ||
+      lowerText.includes('detail') ||
+      lowerText.includes('info');
+
     // Find target project
-    const projectTarget = projectNameMatch || 
-                         (projectNumber && projectNumber >= 1 && projectNumber <= projectCount 
-                           ? PORTFOLIO_DATA.projects[projectNumber - 1] 
-                           : undefined);
-    
+    const projectTarget = projectNameMatch ||
+      (projectNumber && projectNumber >= 1 && projectNumber <= projectCount
+        ? PORTFOLIO_DATA.projects[projectNumber - 1]
+        : undefined);
+
     if (wantsDetails && projectTarget) {
       const githubLink = projectTarget.links.github || 'N/A';
       const demoLink = projectTarget.links.liveDemo || 'N/A';
-      
+
       return `[Aura materializes as a semi-transparent cyan wireframe projection, casting a soft glow over the screen.]
 
 **3D Floating Data Node - Project Detail**
@@ -225,7 +185,7 @@ Would you like to explore other sections?
 2. Ask **"how many projects"** for counts.
 3. Ask about another project by number (e.g., "project 2 details").`;
     }
-    
+
     // Handle "how many" queries
     if (lowerText.includes('how many') || lowerText.includes('count') || lowerText.includes('number')) {
       return `[Aura materializes as a semi-transparent cyan wireframe projection, casting a soft glow over the screen.]
@@ -236,8 +196,8 @@ Would you like to explore other sections?
 
 Would you like to see the complete project list?`;
     }
-    
-    const projectList = PORTFOLIO_DATA.projects.map((p, i) => 
+
+    const projectList = PORTFOLIO_DATA.projects.map((p, i) =>
       `${i + 1}. **${p.title}** - ${p.role || 'Full Stack Developer'}`
     ).join('\n');
     return `[Aura materializes as a semi-transparent cyan wireframe projection, casting a soft glow over the screen.]
@@ -253,7 +213,7 @@ ${projectList}
 2. Type **"project [number] details"** to explore a specific project
 3. Use the **PROJECTS** button above to view the 3D visualization`;
   }
-  
+
   // Skills
   if (lowerText.includes('skill') || lowerText.includes('tech') || lowerText.includes('technology') || lowerText.includes('technologies')) {
     const allSkills = [
@@ -262,7 +222,7 @@ ${projectList}
       ...PORTFOLIO_DATA.skills.backendAndDevOps.map(s => s.name),
       ...PORTFOLIO_DATA.skills.specialty.map(s => s.name)
     ];
-    
+
     if (allSkills.length === 0) {
       return `[Aura materializes as a semi-transparent cyan wireframe projection, casting a soft glow over the screen.]
 
@@ -275,35 +235,35 @@ Would you like to explore other sections?
 2. Type **"history"** to view employment timeline
 3. Type **"about"** to learn more about Sat Paing Oo`;
     }
-    
+
     // Skill-specific "how/what/about" response - improved matching
     // Try exact match first, then partial match
     const exactMatch = allSkillsFlat.find(s => {
       const skillLower = s.name.toLowerCase();
-      return lowerText === skillLower || 
-             lowerText.includes(` ${skillLower} `) ||
-             lowerText.startsWith(`${skillLower} `) ||
-             lowerText.endsWith(` ${skillLower}`);
+      return lowerText === skillLower ||
+        lowerText.includes(` ${skillLower} `) ||
+        lowerText.startsWith(`${skillLower} `) ||
+        lowerText.endsWith(` ${skillLower}`);
     });
-    
+
     const partialMatch = !exactMatch ? allSkillsFlat.find(s => {
       const skillWords = s.name.toLowerCase().split(/[\s\/&]+/);
       return skillWords.some(word => word.length > 2 && lowerText.includes(word));
     }) : null;
-    
+
     const matchedSkill = exactMatch || partialMatch;
-    const wantsDetails = lowerText.includes('how') || 
-                        lowerText.includes('about') || 
-                        lowerText.includes('what') ||
-                        lowerText.includes('detail') ||
-                        lowerText.includes('use');
-    
+    const wantsDetails = lowerText.includes('how') ||
+      lowerText.includes('about') ||
+      lowerText.includes('what') ||
+      lowerText.includes('detail') ||
+      lowerText.includes('use');
+
     if (matchedSkill && wantsDetails) {
       // Find projects using this skill (more flexible matching)
       const skillKeywords = matchedSkill.name.toLowerCase()
         .split(/[\s\/&]+/)
         .filter(w => w.length > 2);
-      
+
       const projectsUsingSkill = PORTFOLIO_DATA.projects
         .filter(p => {
           const techString = p.technologies.join(' ').toLowerCase();
@@ -311,7 +271,7 @@ Would you like to explore other sections?
         })
         .map((p, i) => `${i + 1}. ${p.title} (${p.role})`)
         .join('\n');
-      
+
       return `[Aura materializes as a semi-transparent cyan wireframe projection, casting a soft glow over the screen.]
 
 **Interactive Radar Chart Projection - Skill Focus**
@@ -343,7 +303,7 @@ ${skillsList}
 2. Ask about specific technologies or frameworks (e.g., "Tell me about React")
 3. Type **"projects"** to see how these skills are applied`;
   }
-  
+
   // Education queries
   if (lowerText.includes('education') || lowerText.includes('degree') || lowerText.includes('certificate') || lowerText.includes('certification')) {
     // Handle certifications separately
@@ -361,11 +321,11 @@ Would you like to explore other sections?
 2. Type **"projects"** to see development projects
 3. Type **"about"** to learn more about Sat Paing Oo`;
       }
-      
-      const certList = certs.map((c, i) => 
+
+      const certList = certs.map((c, i) =>
         `${i + 1}. **${c.name}** (${c.year}) - ${c.issuer}`
       ).join('\n');
-      
+
       return `[Aura materializes as a semi-transparent cyan wireframe projection, casting a soft glow over the screen.]
 
 **Certification Records**
@@ -379,7 +339,7 @@ ${certList}
 2. Type **"history"** to view employment timeline
 3. Type **"projects"** to see how skills are applied`;
     }
-    
+
     // Handle education
     const education = PORTFOLIO_DATA.education || [];
     if (education.length === 0) {
@@ -394,11 +354,11 @@ Would you like to explore other sections?
 2. Type **"history"** to view employment timeline
 3. Type **"about"** to learn more about Sat Paing Oo`;
     }
-    
-    const educationList = education.map((e, i) => 
+
+    const educationList = education.map((e, i) =>
       `${i + 1}. **${e.degree}**\n   ${e.institution} (${e.duration})`
     ).join('\n\n');
-    
+
     return `[Aura materializes as a semi-transparent cyan wireframe projection, casting a soft glow over the screen.]
 
 **Educational Background**
@@ -412,11 +372,11 @@ ${educationList}
 2. Type **"history"** to view employment timeline
 3. Type **"projects"** to see practical applications`;
   }
-  
+
   // History / Employment
   if (lowerText.includes('history') || lowerText.includes('experience') || lowerText.includes('employment') || lowerText.includes('work') || lowerText.includes('career') || lowerText.includes('job')) {
     const history = PORTFOLIO_DATA.employmentHistory || [];
-    
+
     if (history.length === 0) {
       return `[Aura materializes as a semi-transparent cyan wireframe projection, casting a soft glow over the screen.]
 
@@ -429,11 +389,11 @@ Would you like to explore other sections?
 2. Type **"skills"** to view technical expertise
 3. Type **"about"** to learn more about Sat Paing Oo`;
     }
-    
-    const historyList = history.map((e, i) => 
+
+    const historyList = history.map((e, i) =>
       `${i + 1}. **${e.position}** at ${e.company} (${e.duration})`
     ).join('\n');
-    
+
     return `[Aura materializes as a semi-transparent cyan wireframe projection, casting a soft glow over the screen.]
 
 **Chronological Timeline Bar - Employment History**
@@ -447,11 +407,11 @@ ${historyList}
 2. Ask about a specific company or position
 3. Type **"about"** to see full professional summary`;
   }
-  
+
   // Gallery
   if (lowerText.includes('gallery') || lowerText.includes('photo') || lowerText.includes('image') || lowerText.includes('picture') || lowerText.includes('screenshot') || lowerText.includes('visual')) {
     const galleryCount = PORTFOLIO_DATA.gallery?.length || 0;
-    
+
     if (galleryCount === 0) {
       return `[Aura materializes as a semi-transparent cyan wireframe projection, casting a soft glow over the screen.]
 
@@ -464,7 +424,7 @@ Would you like to explore other sections?
 2. Type **"skills"** to view technical expertise
 3. Type **"about"** to learn more about Sat Paing Oo`;
     }
-    
+
     return `[Aura materializes as a semi-transparent cyan wireframe projection, casting a soft glow over the screen.]
 
 **Image Archive Nodes - Gallery**
@@ -480,14 +440,14 @@ Accessing ${galleryCount} visual documentation node${galleryCount !== 1 ? 's' : 
 1. Type **"projects"** to see related projects
 2. Type **"about"** to learn more about Sat Paing Oo`;
   }
-  
+
   // Default response - more helpful and flexible
   const projectCount = PORTFOLIO_DATA.projects.length;
   const historyCount = PORTFOLIO_DATA.employmentHistory.length;
   const galleryCount = PORTFOLIO_DATA.gallery?.length || 0;
   const educationCount = PORTFOLIO_DATA.education?.length || 0;
   const certCount = PORTFOLIO_DATA.certifications?.length || 0;
-  
+
   return `[Aura materializes as a semi-transparent cyan wireframe projection, casting a soft glow over the screen.]
 
 **System Response**
@@ -515,172 +475,17 @@ I can help you explore Sat Paing Oo's portfolio:
 
 What would you like to explore?`;
 };
-
 export const initializeChat = () => {
-  // First check: Validate API key exists and is valid
-  if (!hasValidApiKey()) {
-    console.log('Aura: Operating in offline mode - API key not configured or invalid');
-    chatSession = null;
-    // Don't reset quota flag - keep it if it was set
-    return;
-  }
-  
-  // Check quota status from localStorage first
-  if (typeof window !== 'undefined') {
-    const storedQuotaStatus = localStorage.getItem('aura_quota_exceeded');
-    if (storedQuotaStatus === 'true') {
-      quotaExceeded = true;
-    }
-  }
-  
-  // Don't initialize if quota is exceeded
-  if (quotaExceeded) {
-    console.log('Aura: Operating in offline mode - Quota exceeded (persisted)');
-    chatSession = null;
-    return;
-  }
-  
-  // Only initialize if we don't already have a session
-  if (chatSession) {
-    return;
-  }
-  
-  // Final validation before creating session
-  if (!hasValidApiKey()) {
-    console.log('Aura: API key validation failed - not initializing');
-    chatSession = null;
-    return;
-  }
-  
-  try {
-    const ai = new GoogleGenAI({ apiKey: API_KEY });
-    chatSession = ai.chats.create({
-      model: 'gemini-2.5-flash',
-      config: {
-        systemInstruction: SYSTEM_INSTRUCTION,
-        temperature: 0.7,
-      },
-    });
-  } catch (error) {
-    console.error('Failed to initialize Gemini chat:', error);
-    chatSession = null;
-    // If initialization fails, mark as quota exceeded to prevent retries
-    quotaExceeded = true;
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('aura_quota_exceeded', 'true');
-    }
-  }
+  // Chat initialization is local, no setup needed.
 };
 
-// Export function to check if API is available
 export const isApiAvailable = (): boolean => {
-  if (FORCE_OFFLINE) return false;
-  return hasValidApiKey() && !quotaExceeded;
+  // Always mock the API as unavailable so it strictly uses local responses 
+  return false;
 };
 
-export const sendMessageToGemini = async (message: string): Promise<string> => {
-  // Hard override: never call the live API when FORCE_OFFLINE is enabled
-  if (FORCE_OFFLINE) {
-    console.log('Aura: FORCE_OFFLINE enabled - using offline responses only (no Gemini API calls)');
-    return getFallbackResponse(message);
-  }
-
-  // FIRST CHECK: Validate API key - if not valid, return immediately without any API calls
-  if (!hasValidApiKey()) {
-    console.log('Aura: No valid API key - using offline mode');
-    return getFallbackResponse(message);
-  }
-  
-  // SECOND CHECK: If quota is exceeded, use fallback immediately without API call
-  if (quotaExceeded) {
-    console.log('Aura: Quota exceeded - using offline mode');
-    return getFallbackResponse(message);
-  }
-  
-  // THIRD CHECK: Check localStorage for quota status
-  if (typeof window !== 'undefined' && localStorage.getItem('aura_quota_exceeded') === 'true') {
-    quotaExceeded = true;
-    console.log('Aura: Quota exceeded (from storage) - using offline mode');
-    return getFallbackResponse(message);
-  }
-  
-  // FOURTH CHECK: Final validation before proceeding
-  if (!hasValidApiKey() || quotaExceeded) {
-    return getFallbackResponse(message);
-  }
-  
-  // Only proceed with API if key is valid and quota is not exceeded
-  // Try to use Gemini API
-  if (!chatSession) {
-    initializeChat();
-    // After initialization, check again - validate key and quota
-    if (!hasValidApiKey() || !chatSession || quotaExceeded) {
-      return getFallbackResponse(message);
-    }
-  }
-  
-  if (!chatSession) {
-    // If initialization failed, use fallback
-    return getFallbackResponse(message);
-  }
-  
-  // FINAL CHECKS: Multiple validation layers right before API call
-  // Check localStorage for quota status (might have been set by another tab)
-  if (typeof window !== 'undefined' && localStorage.getItem('aura_quota_exceeded') === 'true') {
-    quotaExceeded = true;
-    chatSession = null;
-    console.log('Aura: Quota exceeded (from storage) - preventing API call');
-    return getFallbackResponse(message);
-  }
-  
-  // Check quota flag
-  if (quotaExceeded) {
-    chatSession = null;
-    console.log('Aura: Quota exceeded - preventing API call');
-    return getFallbackResponse(message);
-  }
-  
-  // ABSOLUTE FINAL CHECK: Verify key is still valid before API call
-  if (!hasValidApiKey()) {
-    chatSession = null;
-    console.error('Aura: CRITICAL - Attempted API call without valid key - blocked');
-    return getFallbackResponse(message);
-  }
-
-  try {
-    // FINAL GUARD: One last check inside try block before the actual API call
-    if (!hasValidApiKey()) {
-      throw new Error('API key validation failed - no API call made');
-    }
-    
-    const response = await chatSession.sendMessage({ message });
-    return response.text || getFallbackResponse(message);
-  } catch (error: any) {
-    // Check if it's a quota/rate limit error
-    const errorMessage = error?.message || error?.toString() || '';
-    const errorCode = error?.code || error?.status || '';
-    
-    if (errorCode === 429 || 
-        errorMessage.includes('429') || 
-        errorMessage.includes('quota') || 
-        errorMessage.includes('RESOURCE_EXHAUSTED') ||
-        errorMessage.includes('rate limit') ||
-        errorMessage.includes('Too Many Requests')) {
-      // Set quota exceeded flag to prevent future API calls
-      quotaExceeded = true;
-      // Persist to localStorage so it survives page reloads
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('aura_quota_exceeded', 'true');
-      }
-      console.log('Aura: Quota exceeded - switching to offline mode permanently');
-      // Destroy chat session to prevent further calls
-      chatSession = null;
-      // Return fallback immediately
-      return getFallbackResponse(message);
-    }
-    
-    console.error("Gemini API Error:", error);
-    // On other errors, fall back to basic responses
-    return getFallbackResponse(message);
-  }
+export const sendMessageToAura = async (message: string): Promise<string> => {
+  // Add a small delay for a realistic feel
+  await new Promise(resolve => setTimeout(resolve, 800));
+  return getFallbackResponse(message);
 };

@@ -2,31 +2,88 @@ import React, { useState, useEffect, useRef } from 'react';
 import { sendMessageToAura, initializeChat, isApiAvailable } from '../services/auraService';
 import { ChatMessage } from '../types';
 
-// Typing animation component
-const TypingText: React.FC<{ text: string; onComplete?: () => void }> = ({ text, onComplete }) => {
+export const formatText = (text: string) => {
+  // Split by lines first to preserve line breaks
+  const lines = text.split('\n');
+
+  return lines.map((line, lineIndex) => {
+    // Special handling for Aura's "materializes" stage-direction line:
+    // Render it as a subtle, italicized system cue instead of a long, noisy bracketed sentence.
+    if (line.trim() === '[Aura materializes as a semi-transparent cyan wireframe projection, casting a soft glow over the screen.]') {
+      return (
+        <div
+          key={`line-${lineIndex}`}
+          className="mb-2 text-xs italic text-holo-400"
+        >
+          Aura appears as a holographic guide.
+        </div>
+      );
+    }
+
+    // Skip empty lines but preserve spacing
+    if (line.trim() === '') {
+      return <br key={`line-${lineIndex}`} />;
+    }
+
+    // Parse **bold** markdown within each line
+    const parts = line.split(/(\*\*.*?\*\*)/g);
+    const formattedParts = parts.map((part, partIndex) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return (
+          <span key={`${lineIndex}-${partIndex}`} className="text-holo-300 font-bold drop-shadow-[0_0_5px_rgba(56,223,255,0.8)]">
+            {part.slice(2, -2)}
+          </span>
+        );
+      }
+      return <span key={`${lineIndex}-${partIndex}`}>{part}</span>;
+    });
+
+    return (
+      <div key={`line-${lineIndex}`} className="mb-1">
+        {formattedParts}
+      </div>
+    );
+  });
+};
+
+export const TypingText: React.FC<{
+  text: string;
+  messageId: string;
+  onComplete: () => void;
+  isAlreadyComplete: boolean;
+}> = ({ text, messageId, onComplete, isAlreadyComplete }) => {
   const [displayedText, setDisplayedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
+    if (isAlreadyComplete || isComplete) {
+      setDisplayedText(text);
+      setIsComplete(true);
+      return;
+    }
+
     if (currentIndex < text.length) {
       const timeout = setTimeout(() => {
         setDisplayedText(text.slice(0, currentIndex + 1));
         setCurrentIndex(currentIndex + 1);
-      }, 20); // Adjust speed here (lower = faster)
-
+      }, 15);
       return () => clearTimeout(timeout);
-    } else if (onComplete) {
+    } else if (currentIndex >= text.length && !isComplete) {
+      setIsComplete(true);
       onComplete();
     }
-  }, [currentIndex, text, onComplete]);
+  }, [currentIndex, text, isAlreadyComplete, isComplete, onComplete]);
 
-  // Reset when text changes
   useEffect(() => {
-    setDisplayedText('');
-    setCurrentIndex(0);
-  }, [text]);
+    if (!isAlreadyComplete) {
+      setDisplayedText('');
+      setCurrentIndex(0);
+      setIsComplete(false);
+    }
+  }, [messageId, isAlreadyComplete]);
 
-  return <>{displayedText}</>;
+  return <>{formatText(displayedText)}</>;
 };
 
 interface ChatInterfaceProps {
@@ -107,95 +164,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
     }
   };
 
-  // Typing animation component
-  const TypingText: React.FC<{ text: string; messageId: string }> = ({ text, messageId }) => {
-    const [displayedText, setDisplayedText] = useState('');
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [isComplete, setIsComplete] = useState(false);
-
-    useEffect(() => {
-      // If this message already completed typing, show full text immediately
-      if (completedTypingMessages.current.has(messageId)) {
-        setDisplayedText(text);
-        setIsComplete(true);
-        return;
-      }
-
-      if (currentIndex < text.length) {
-        const timeout = setTimeout(() => {
-          setDisplayedText(text.slice(0, currentIndex + 1));
-          setCurrentIndex(currentIndex + 1);
-        }, 15); // Typing speed (lower = faster, 15ms = smooth)
-
-        return () => clearTimeout(timeout);
-      } else if (currentIndex >= text.length && !isComplete) {
-        // Mark as complete when typing finishes
-        completedTypingMessages.current.add(messageId);
-        setIsComplete(true);
-      }
-    }, [currentIndex, text, messageId, isComplete]);
-
-    // Only reset if this is a completely new message (not in completed set)
-    useEffect(() => {
-      if (!completedTypingMessages.current.has(messageId)) {
-        setDisplayedText('');
-        setCurrentIndex(0);
-        setIsComplete(false);
-      }
-    }, [messageId]);
-
-    return formatText(displayedText);
-  };
-
-  const formatText = (text: string) => {
-    // Split by lines first to preserve line breaks
-    const lines = text.split('\n');
-
-    return lines.map((line, lineIndex) => {
-      // Special handling for Aura's "materializes" stage-direction line:
-      // Render it as a subtle, italicized system cue instead of a long, noisy bracketed sentence.
-      if (line.trim() === '[Aura materializes as a semi-transparent cyan wireframe projection, casting a soft glow over the screen.]') {
-        return (
-          <div
-            key={`line-${lineIndex}`}
-            className="mb-2 text-xs italic text-holo-400"
-          >
-            Aura appears as a holographic guide.
-          </div>
-        );
-      }
-
-      // Skip empty lines but preserve spacing
-      if (line.trim() === '') {
-        return <br key={`line-${lineIndex}`} />;
-      }
-
-      // Parse **bold** markdown within each line
-      const parts = line.split(/(\*\*.*?\*\*)/g);
-      const formattedParts = parts.map((part, partIndex) => {
-        if (part.startsWith('**') && part.endsWith('**')) {
-          return (
-            <span key={`${lineIndex}-${partIndex}`} className="text-holo-300 font-bold drop-shadow-[0_0_5px_rgba(56,223,255,0.8)]">
-              {part.slice(2, -2)}
-            </span>
-          );
-        }
-        return <span key={`${lineIndex}-${partIndex}`}>{part}</span>;
-      });
-
-      return (
-        <div key={`line-${lineIndex}`} className="mb-1">
-          {formattedParts}
-        </div>
-      );
-    });
-  };
-
   return (
     <div className={`fixed z-50 transition-all duration-500 ease-in-out pointer-events-none 
       ${isOpen ? 'inset-x-0 bottom-0 sm:bottom-4 sm:right-4 sm:inset-x-auto w-full sm:w-[500px] md:w-[450px] landscape:max-w-[400px] landscape:md:max-w-[450px] landscape:right-0 landscape:sm:right-4 h-[80dvh] landscape:h-[90dvh] sm:h-[600px] md:h-[600px] flex flex-col justify-end' : 'bottom-3 right-3 sm:bottom-4 sm:right-4 w-14 h-14 sm:w-16 sm:h-16 landscape:bottom-2 landscape:right-2'}`}>
       {isOpen ? (
-        <div className="flex flex-col w-full h-full max-h-full glass-panel rounded-t-lg sm:rounded-lg overflow-hidden border-t sm:border border-holo-500/50 shadow-[0_-10px_40px_rgba(0,171,209,0.2)] sm:shadow-[0_0_30px_rgba(0,171,209,0.3)] pointer-events-auto">
+        <div key="chat-window" className="flex flex-col w-full h-full max-h-full glass-panel rounded-t-lg sm:rounded-lg overflow-hidden border-t sm:border border-holo-500/50 shadow-[0_-10px_40px_rgba(0,171,209,0.2)] sm:shadow-[0_0_30px_rgba(0,171,209,0.3)] pointer-events-auto">
           {/* Header */}
           <div className="flex items-center justify-between p-3 sm:p-4 border-b border-holo-500/30 bg-black/40 flex-shrink-0">
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
@@ -230,9 +203,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
                   )}
                   <div className="leading-relaxed">
                     {msg.role === 'model' && !msg.skipTyping && !completedTypingMessages.current.has(msg.id) ? (
-                      <TypingText text={msg.text} messageId={msg.id} />
+                      <TypingText text={msg.text} messageId={msg.id} onComplete={() => completedTypingMessages.current.add(msg.id)} isAlreadyComplete={completedTypingMessages.current.has(msg.id)} />
                     ) : (
-                      formatText(msg.text)
+                      <>{formatText(msg.text)}</>
                     )}
                   </div>
                 </div>
@@ -275,6 +248,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
         </div>
       ) : (
         <button
+          key="chat-toggle"
           onClick={() => setIsOpen(true)}
           className="w-14 h-14 sm:w-16 sm:h-16 rounded-full glass-panel border border-holo-400 flex items-center justify-center hover:scale-110 transition-transform group cursor-pointer pointer-events-auto"
         >

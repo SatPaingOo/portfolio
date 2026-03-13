@@ -4,7 +4,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
   personalInfo: {
     name: "Sat Paing Oo",
     title: "Full Stack Software Engineer (React, .NET & Node.js)",
-    summary: "Full stack software engineer with 5+ years of hands-on experience designing and building web, mobile, and desktop applications using React, Redux, Node.js, C#/.NET, .NET Core and Python on MS SQL Server, MySQL and Windows Server, with a strong focus on clean architecture and CI/CD automation.",
+    summary: "Full stack software engineer with 5+ years of hands-on experience designing and building high-performance applications using React 19, Next.js 15, Node.js, and C#/.NET. Expert in crafting premium UI/UX with Tailwind CSS and Framer Motion, with a strong focus on clean architecture, AI integration, and CI/CD automation.",
     contact: {
       email: "satpaingoo777@gmail.com",
       linkedin: "https://www.linkedin.com/in/satpaingoo777/",
@@ -23,12 +23,12 @@ export const PORTFOLIO_DATA: PortfolioData = {
       { name: "React", level: "Expert" },
       { name: "React Native", level: "Familiar" },
       { name: "Electron", level: "Familiar" },
-      { name: "Next.js", level: "Proficient" },
+      { name: "Next.js 15", level: "Expert" },
       { name: "Vite", level: "Proficient" },
       { name: "Redux/Zustand", level: "Proficient" },
       { name: "Bootstrap", level: "Expert" },
-      { name: "Tailwind CSS", level: "Proficient" },
-      { name: "Framer Motion", level: "Familiar" },
+      { name: "Tailwind CSS", level: "Expert" },
+      { name: "Framer Motion", level: "Proficient" },
       { name: "React Router", level: "Expert" },
     ],
     backendAndDevOps: [
@@ -202,6 +202,19 @@ export const PORTFOLIO_DATA: PortfolioData = {
       links: {
         liveDemo: "https://vaultguard-pro.vercel.app/",
         github: "https://github.com/SatPaingOo/VAULTGUARD_PRO.git"
+      }
+    },
+    {
+      id: 7,
+      title: "GitaVerse - Logic-Based Music Discovery Platform",
+      role: "Solo Full Stack Developer & Designer",
+      technologies: ["Next.js 15", "React 19", "TypeScript", "Tailwind CSS", "Framer Motion", "YouTube Search API", "React Player"],
+      challenge: "Create a high-fidelity, frictionless music discovery platform that helps users find music matching their exact mood and energy level without the clutter of account creation or ads, while ensuring high performance and a premium 'cosmic' aesthetic.",
+      solution: "Engineered a Next.js application with a 5-step interactive logic-based personalization flow. Integrated YouTube Search API for dynamic playlist generation and used React Player for seamless audio-visual feedback. Implemented a futuristic 'cosmic' dark theme with Framer Motion for smooth transitions and a premium music console experience.",
+      metrics: "Achieved an instant, zero-friction music discovery loop (Set Vibe -> Curate -> Play). Delivered a high-performance web experience with 100% client-side playback and a state-of-the-art UI that maximizes user engagement through emotional and situational music matching.",
+      links: {
+        liveDemo: "https://gitagravity.vercel.app/",
+        github: null
       }
     },
   ],

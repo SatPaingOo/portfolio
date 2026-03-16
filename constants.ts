@@ -206,7 +206,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
     },
     {
       id: 7,
-      title: "GitaVerse - Logic-Based Music Discovery Platform",
+      title: "Gita Gravity",
       role: "Solo Full Stack Developer & Designer",
       technologies: ["Next.js 15", "React 19", "TypeScript", "Tailwind CSS", "Framer Motion", "YouTube Search API", "React Player"],
       challenge: "Create a high-fidelity, frictionless music discovery platform that helps users find music matching their exact mood and energy level without the clutter of account creation or ads, while ensuring high performance and a premium 'cosmic' aesthetic.",

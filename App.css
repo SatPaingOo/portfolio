@@ -61,3 +61,35 @@
     background: #38dfff;
   }
 }
+
+/* Hologram head motion. All three switch off under prefers-reduced-motion. */
+@keyframes holo-scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(400%); }
+}
+@keyframes holo-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+/* Irregular dips so the flicker reads as a fault, not a pulse. */
+@keyframes holo-flicker {
+  0%, 41%, 43%, 77%, 79.5%, 100% { opacity: 1; }
+  42% { opacity: 0.55; }
+  78% { opacity: 0.72; }
+}
+.holo-scan { animation: holo-scan 3.6s linear infinite; }
+.holo-float { animation: holo-float 6s ease-in-out infinite; }
+.holo-flicker { animation: holo-flicker 7s steps(1, end) infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .holo-scan,
+  .holo-float,
+  .holo-flicker { animation: none; }
+  .holo-scan { display: none; }
+}
+
+/* The three.js head fades in over the SVG placeholder once its chunk loads. */
+@keyframes holo-fadein {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

@@ -5,7 +5,7 @@ import ProjectsView from './components/views/ProjectsView';
 import SkillsView from './components/views/SkillsView';
 import HistoryView from './components/views/HistoryView';
 import GalleryView from './components/views/GalleryView';
-import HolographicHeadView from './components/HolographicHeadView';
+import HeroHead from './components/HeroHead';
 import { ViewMode } from './types';
 import { PORTFOLIO_DATA } from './constants';
 
@@ -36,7 +36,7 @@ const App: React.FC = () => {
              bottom padding keeps the buttons clear of the viewport edge and of
              the collapsed AURA bubble. */
           <div className="flex min-h-full flex-col items-center justify-center gap-2 px-4 pt-2 pb-20 text-center z-10 sm:gap-4 sm:pt-6 sm:pb-12 md:px-6">
-            <HolographicHeadView />
+            <HeroHead />
 
             <h1 className="text-4xl md:text-6xl font-display font-bold text-white tracking-tighter holo-text-shadow">
               {PORTFOLIO_DATA.personalInfo.name.toUpperCase()}

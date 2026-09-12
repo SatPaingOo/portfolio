@@ -11,6 +11,12 @@ export default defineConfig(({ mode }) => {
       host: '0.0.0.0',
     },
     plugins: [react()],
+    // Pre-bundle the lazily imported 3D stack at startup. Discovered on first
+    // use instead, Vite re-optimizes mid-session and the page ends up running
+    // two copies of React ("Invalid hook call").
+    optimizeDeps: {
+      include: ['three', '@react-three/fiber', 'three/examples/jsm/utils/BufferGeometryUtils.js'],
+    },
     define: {
       'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
       'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
@@ -28,7 +34,8 @@ export default defineConfig(({ mode }) => {
         output: {
           manualChunks: {
             'react-vendor': ['react', 'react-dom'],
-            'three-vendor': ['three', '@react-three/fiber', '@react-three/drei'],
+            // three.js is deliberately not listed. HeroHead lazy-loads it, and a
+            // manual chunk pulls shared modules in and forces an eager preload.
             'chart-vendor': ['recharts']
           }
         }

@@ -34,3 +34,17 @@ dist-ssr
 /playwright-report
 /blob-report
 /playwright/.cache
+
+# AI coding agent workspaces (local config, caches, session history)
+.claude/
+.cursor/
+.windsurf/
+.continue/
+.codeium/
+.gemini/
+.roo/
+.kilocode/
+.trae/
+.cline_rules/
+.aider*
+.specstory/

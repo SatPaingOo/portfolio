@@ -5,7 +5,8 @@ import { gotoHome, closeChat } from './helpers';
  * Regression cover for three reported defects:
  *  - the home view demanded a scroll even when the window had room to spare
  *  - the hero buttons fell past the bottom edge of the viewport
- *  - the hero canvas kept its unsized 300x150 default and rendered nothing
+ *  - the hero head failed to render (first a canvas left at its unsized
+ *    300x150 default, now the hologram SVG served from public/)
  */
 const overflowOf = (page: import('@playwright/test').Page) =>
   page.evaluate(() => {
@@ -14,6 +15,11 @@ const overflowOf = (page: import('@playwright/test').Page) =>
   });
 
 test.describe('Hero layout', () => {
+  // Layout checks do not need the 3D head animating. Under reduced motion it
+  // renders on demand, which keeps several headless browsers running software
+  // WebGL from starving each other of CPU and timing tests out.
+  test.use({ reducedMotion: 'reduce' });
+
   /**
    * Sizes chosen because each one has room for the hero. A 393x727 phone does
    * not: the summary alone runs 250px there, so a short scroll is honest and is
@@ -86,30 +92,53 @@ test.describe('Hero layout', () => {
     expect(new Set(widths).size, `ragged button widths: ${widths}`).toBe(1);
   });
 
-  test('the hero canvas is measured, not left at the 300x150 default', async ({ page }) => {
+  test('the hero head box renders square', async ({ page }) => {
     await gotoHome(page);
-    const canvas = page.locator('main canvas');
-    await expect(canvas).toBeAttached();
-    const box = (await canvas.boundingBox())!;
-    expect(box.width, 'react-three-fiber never sized the canvas').not.toBe(300);
-    expect(Math.round(box.width), 'the canvas is not square').toBe(Math.round(box.height));
-    expect(box.width).toBeGreaterThanOrEqual(100);
+    const head = page.getByTestId('hero-head');
+    await expect(head).toBeVisible();
+    const box = (await head.boundingBox())!;
+    expect(Math.round(box.width), 'the head box is not square').toBe(Math.round(box.height));
+    expect(box.width).toBeGreaterThanOrEqual(90);
   });
 
-  test('the hero canvas shrinks with viewport height', async ({ page }) => {
+  test('the 3D head takes over from the SVG placeholder and fills the box', async ({ page }) => {
+    await gotoHome(page);
+    const head = page.getByTestId('hero-head');
+    const canvas = head.locator('canvas');
+    await expect(canvas, 'three.js never mounted; the SVG placeholder is still showing').toBeVisible({ timeout: 15000 });
+
+    // Compare against the head box rather than "not 300": the box is capped at
+    // exactly 300px on tablet, the same width as the unsized canvas default.
+    // Height is the real signal (150 unsized, square when sized). Poll, because
+    // react-three-fiber sizes the canvas from a ResizeObserver callback that
+    // lands a frame or two after mount.
+    const hb = (await head.boundingBox())!;
+    const want = `${Math.round(hb.width)}x${Math.round(hb.height)}`;
+    await expect
+      .poll(
+        async () => {
+          const b = (await canvas.boundingBox())!;
+          return `${Math.round(b.width)}x${Math.round(b.height)}`;
+        },
+        { message: 'react-three-fiber never sized the canvas to the head box', timeout: 5000 }
+      )
+      .toBe(want);
+  });
+
+  test('the hero head shrinks with viewport height', async ({ page }) => {
     const measure = async () => {
       await gotoHome(page);
-      const box = (await page.locator('main canvas').boundingBox())!;
+      const box = (await page.getByTestId('hero-head').boundingBox())!;
       return Math.round(box.height);
     };
     await page.setViewportSize({ width: 1280, height: 900 });
     const tall = await measure();
     await page.setViewportSize({ width: 1280, height: 560 });
     const short = await measure();
-    expect(short, `canvas stayed at ${short}px on a short window (${tall}px on a tall one)`).toBeLessThan(tall);
+    expect(short, `head stayed at ${short}px on a short window (${tall}px on a tall one)`).toBeLessThan(tall);
   });
 
-  test('the 3D scene renders without console errors', async ({ page }) => {
+  test('the hero renders without console errors', async ({ page }) => {
     const errors: string[] = [];
     page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
     page.on('pageerror', (e) => errors.push(e.message));

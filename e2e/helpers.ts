@@ -4,8 +4,20 @@ import { Page, Locator, expect } from '@playwright/test';
 export const MIN_TARGET = 44;
 
 export async function gotoHome(page: Page) {
-  await page.goto('/');
+  // './' resolves against baseURL and keeps the /portfolio/ base path; '/' goes
+  // to the server root, which vite preview does not serve.
+  await page.goto('./');
   await expect(page.getByRole('heading', { level: 1 })).toBeAttached();
+  // Several tests measure layout. Until the web fonts arrive the fallback face
+  // is much wider than Rajdhani, the summary wraps onto extra lines, and a short
+  // window reports a scrollbar it does not really have. Capped, and resolved to
+  // a boolean, so a stalled font request cannot hang the test.
+  await page.evaluate(() =>
+    Promise.race([
+      document.fonts.ready.then(() => true),
+      new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 4000)),
+    ])
+  );
 }
 
 /** The AURA chat panel that opens by default. */

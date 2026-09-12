@@ -41,7 +41,7 @@ const App: React.FC = () => {
             <h1 className="text-4xl md:text-6xl font-display font-bold text-white tracking-tighter holo-text-shadow">
               {PORTFOLIO_DATA.personalInfo.name.toUpperCase()}
             </h1>
-            <p className="text-lg md:text-xl text-holo-400 font-mono tracking-widest">
+            <p className="text-balance font-mono text-base tracking-wider text-holo-400 sm:text-lg sm:tracking-widest md:text-xl">
               {PORTFOLIO_DATA.personalInfo.title}
             </p>
 

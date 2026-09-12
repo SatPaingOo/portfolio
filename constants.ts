@@ -3,8 +3,8 @@ import { PortfolioData } from './types';
 export const PORTFOLIO_DATA: PortfolioData = {
   personalInfo: {
     name: "Sat Paing Oo",
-    title: "Full Stack Software Engineer (React, .NET & Node.js)",
-    summary: "Full stack software engineer with 5+ years of hands-on experience designing and building high-performance applications using React 19, Next.js 15, Node.js, and C#/.NET. Expert in crafting premium UI/UX with Tailwind CSS and Framer Motion, with a strong focus on clean architecture, AI integration, and CI/CD automation.",
+    title: "Full Stack & Applied AI Engineer",
+    summary: "Full stack engineer with 5+ years building production POS and e-commerce platforms in React, Next.js, Node.js and C#/.NET. Applies AI in practice: Gemini features in shipped apps, a self-scheduling multi-model LLM pipeline with grounded fact-checking, and a disk-backed engine serving a 61 GB MoE model on a 31 GB laptop.",
     contact: {
       email: "satpaingoo777@gmail.com",
       linkedin: "https://www.linkedin.com/in/satpaingoo777/",
@@ -45,7 +45,9 @@ export const PORTFOLIO_DATA: PortfolioData = {
     specialty: [
       { name: "Full Stack Web Applications", level: "Expert" },
       { name: "React & Redux SPA Architecture", level: "Expert" },
-      { name: "AI Integration (Gemini AI)", level: "Proficient" },
+      { name: "LLM App Integration (Gemini, Groq, OpenRouter)", level: "Proficient" },
+      { name: "AI Pipelines: Model Routing & Grounded Verification", level: "Proficient" },
+      { name: "Local LLM Inference (MoE, Quantization, C Kernels)", level: "Familiar" },
       { name: "Clean Architecture & Domain-Driven Design", level: "Proficient" },
       { name: "Database Design & Optimization (MS SQL, MySQL)", level: "Expert" },
       { name: "Continuous Integration & Delivery", level: "Proficient" }
@@ -137,6 +139,32 @@ export const PORTFOLIO_DATA: PortfolioData = {
       links: {
         liveDemo: "https://shop.axtrapos.com/",
         github: null
+      }
+    },
+    {
+      id: 8,
+      title: "Information Hub - Autonomous AI Intelligence Library",
+      role: "Solo Applied AI Engineer – Self-Scheduling LLM Data Pipeline",
+      technologies: ["Python", "GitHub Actions", "Gemini Search Grounding", "Groq", "OpenRouter", "D3.js", "Tailwind CSS", "pytest"],
+      challenge: "Build a daily intelligence library of world, tech, politics and product news that writes deep-dive briefings and fact-checks its own claims, running entirely on free tiers with no server, no fixed schedule and no manual upkeep.",
+      solution: "Built a two-phase Python pipeline on GitHub Actions. The collect phase gathers RSS, arXiv, Hacker News and GitHub sources, deduplicates them, and has Groq and OpenRouter free models write deep-dives, discovering free models at run time and rotating to the next model or provider on rate limits and errors. The check phase verifies claims with Gemini search grounding and scores every item. A pre-call gate enforces provider cooldowns and token budgets, and the pipeline rewrites its own cron to the next moment collection is possible. Records are stored as raw frames, Markdown previews and schema-validated JSON, classified by region, content type, topic and category, and published to a static library site with a D3 knowledge graph.",
+      metrics: "Runs at zero cost on GitHub Actions and free AI tiers, with a full provenance trail on every item showing which provider and model wrote it, which model checked it and its grounding score. Items scoring below 0.5 stay in pending review instead of being marked verified, and the live site re-renders automatically whenever the pipeline commits new data.",
+      links: {
+        liveDemo: "https://satpaingoo.github.io/information-hub/",
+        github: "https://github.com/SatPaingOo/information-hub"
+      }
+    },
+    {
+      id: 9,
+      title: "Joule - Disk-Backed MoE LLM Inference Engine",
+      role: "Solo AI Systems Engineer – Local LLM Inference Research",
+      technologies: ["Python", "C", "PyTorch", "Hugging Face Transformers", "Q4 Quantization", "Mixture of Experts", "OpenAI-compatible API"],
+      challenge: "Serve a Mixture-of-Experts language model larger than the machine's RAM on a CPU-only laptop by treating weights like a database: keep them on disk, load only what each token needs, and release them after use.",
+      solution: "Built a config-driven inference engine covering 7 architecture families that loads only the router's active expert set per token. Wrote a native C batch-decode kernel with Q4 quantized matrix multiplication whose output is bit-identical to single-stream decoding, plus an OpenAI-compatible server with browser chat. Every kernel is checked against Hugging Face Transformers, and every claim traces to a measured entry in the validation log, including the ideas that failed.",
+      metrics: "Served the 61 GB Qwen3-30B-A3B on a 31 GB laptop with RAM proportional to the working set and budget-invariant outputs, and verified the native kernel against Hugging Face on 5 models. Measurements also disproved per-query layer selection and claims of 30-150 tok/s on a laptop: single-stream decode is memory-bandwidth-bound at about 7-10 tok/s, with a measured real serving aggregate of 3-5 tok/s.",
+      links: {
+        liveDemo: null,
+        github: "https://github.com/SatPaingOo/joule"
       }
     },
     {

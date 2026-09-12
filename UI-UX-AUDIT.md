@@ -3,10 +3,14 @@
 Reviewed 2026-09-12 against the running app (`npm run dev`) at three viewports:
 1440x900 desktop, 768x1024 tablet, 393x851 mobile (Pixel 5).
 
-Automated coverage lives in `e2e/`. Run it with `npm test`.
+Automated coverage lives in `e2e/`. Run it with `npm test`. Tests run against a
+production build served by `vite preview` on port 4173, with three workers,
+because headless Chromium draws the WebGL hero in software.
 
 **First baseline: 39 passed, 70 failed, 8 skipped** across the three viewport projects.
 **After the first round of fixes: 78 passed, 71 failed, 10 skipped** of 159 tests.
+**Latest run, production build: 81 passed, 71 failed, 10 skipped** of 162 tests.
+Every remaining failure is an open item below; none are timeouts.
 Every failure below was reproduced in the browser, not inferred from the source.
 
 Items marked **[fixed]** have been repaired and are held by a named test.
@@ -228,16 +232,42 @@ layers, all with `THREE.AdditiveBlending`. Roughly 7,000 line segments overlap
 inside a 180-240px box, additive light saturates, and the result is a washed-out
 white sphere with no structure and none of the cyan brand colour.
 
-Fixed: rebuilt as a 20-face icosahedron cage with glowing vertex nodes, a
-Fresnel rim-lit inner shell on normal blending, two thin orbital trails, and a
-small cyan core. The four stacked additive wireframe spheres and the two white
-emissive cores at intensity 8 and 10 are gone, so the interior stays dark and
-only the silhouette glows.
+Fixed with a procedurally sculpted three.js android bust in
+`components/HolographicHead.tsx`. An android was chosen over a human face
+because it suits the AURA guide, and because hard-surface forms are what
+procedural geometry does well.
 
-One trap worth recording: the shell first rendered as a solid cyan disc because
-the material was `DoubleSide`. On a back face the normal points away from the
-camera, the Fresnel term saturates to 1, and the whole silhouette fills in.
-`FrontSide` is required for a rim-lit shell.
+The head keeps human proportions (an ellipsoid with the lower half filled out,
+the dome squared off, a defined jaw), but its front is flattened into one
+faceplate carved with a visor channel, a nose ridge, cheek plates, grille slots
+and a chin plate. Seams and lights are strokes projected onto the surface, so
+they stay in place as it turns: faceplate and brow seams, a crest over the
+skull, side panel seams, cheek vents, the grille, and a visor with glowing
+edges, inner lines and two eye lights that a slow light sweeps across. The ear
+modules are pucks with light rings and a fin. The neck is segmented with
+cables, and the shoulders and chest are armour plates with a small core light.
+The bust shades from cyan at the head to blue at the chest before dissolving
+into the projector rings. It renders as a dim particle cloud, a rim-lit surface
+with contour lines, and a depth-only occluder that hides the far side.
+
+Two lessons from getting there. Rim light alone does not make a form readable
+from the front: thousands of additive points saturate to one flat glow, and
+legibility came from strokes. And the occluder has to be inset along each vertex
+normal; scaling it about the origin pushed it outward on surfaces that face the
+origin, like the tops of the shoulders, where it hid what it should have sat
+behind.
+
+Earlier attempts that missed the brief: an icosahedron core read as an abstract
+object; a `LatheGeometry` bust read as a chess pawn; a flat SVG was not 3D; a
+sculpted human face read, but looked like a mannequin. The SVG, now an android
+line drawing, stays in `public/hologram-head.svg` as the placeholder while
+three.js loads and as the fallback without WebGL.
+
+`HeroHead` lazy-loads the 3D bust, so three.js is not part of the first page
+load: `index.html` preloads only react-vendor and chart-vendor, and three.js
+lives in its own on-demand chunk. That needed `three-vendor` removed from
+`manualChunks`, and the 3D dependencies listed in `optimizeDeps.include` so Vite
+does not re-optimize mid-session and load two copies of React.
 
 ### 19. Hover scale on the 3D object never applies — **[fixed]**
 
@@ -319,6 +349,12 @@ visitors never open.
 Fix: `React.lazy` plus `Suspense` for `HolographicHeadView` and `SkillsView`,
 render a static SVG or CSS poster as the fallback, and consider replacing
 recharts with a hand-rolled SVG radar (about 40 lines) to delete 314 kB.
+
+Partly fixed: three.js is now lazy-loaded through `HeroHead`, with the SVG head
+as its placeholder, and `index.html` no longer preloads it. recharts is still
+eager because `SkillsView` is imported statically. The landing-payload test
+still fails for that reason, and because it also counts the three.js chunk
+that downloads right after first paint.
 
 ### 26. Dead code and an unused dependency
 

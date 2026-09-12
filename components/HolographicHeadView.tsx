@@ -3,81 +3,88 @@ import { Canvas } from '@react-three/fiber';
 import HolographicHead from './HolographicHead';
 
 const HolographicHeadView: React.FC = () => {
-  const [mouseX, setMouseX] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const pointer = useRef(0);
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        // Normalize mouse position: -1 (left) to 1 (right)
-        const normalizedX = ((e.clientX - centerX) / (rect.width / 2)) * 0.5;
-        // Clamp between -1 and 1
-        setMouseX(Math.max(-1, Math.min(1, normalizedX)));
-      }
+    const query = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReducedMotion(query.matches);
+    const onChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    query.addEventListener('change', onChange);
+    return () => query.removeEventListener('change', onChange);
+  }, []);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    // Cache the box and refresh it on resize instead of measuring inside the
+    // pointer handler, which used to force a layout on every mouse event.
+    let centerX = 0;
+    let halfWidth = 1;
+    const measure = () => {
+      const rect = el.getBoundingClientRect();
+      centerX = rect.left + rect.width / 2;
+      halfWidth = Math.max(rect.width / 2, 1);
+    };
+    measure();
+
+    // One update per animation frame, written to a ref so the Canvas host never
+    // re-renders while the pointer moves.
+    let frame = 0;
+    let latestX = centerX;
+    const flush = () => {
+      frame = 0;
+      pointer.current = Math.max(-1, Math.min(1, ((latestX - centerX) / halfWidth) * 0.5));
+    };
+    const onPointerMove = (e: PointerEvent) => {
+      latestX = e.clientX;
+      if (!frame) frame = requestAnimationFrame(flush);
     };
 
-    // Track mouse movement
-    window.addEventListener('mousemove', handleMouseMove);
-    
-    // Reset to center when mouse leaves
-    const handleMouseLeave = () => {
-      setMouseX(0);
-      setIsHovered(false);
-    };
-    
-    if (containerRef.current) {
-      containerRef.current.addEventListener('mouseleave', handleMouseLeave);
-    }
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+    window.addEventListener('resize', measure);
+    window.addEventListener('scroll', measure, { passive: true });
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      if (containerRef.current) {
-        containerRef.current.removeEventListener('mouseleave', handleMouseLeave);
-      }
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('resize', measure);
+      window.removeEventListener('scroll', measure);
     };
   }, []);
 
   return (
-    <div 
+    <div
       ref={containerRef}
-      className="relative cursor-pointer z-10 transition-transform duration-500 ease-out w-[180px] h-[180px] sm:w-[200px] sm:h-[200px] md:w-[240px] md:h-[240px] max-w-full"
-      style={{ 
-        perspective: '1000px',
-        background: 'transparent',
-        transform: isHovered ? 'scale(1.15) sm:scale(1.25)' : 'scale(1)',
-        transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      aria-hidden="true"
+      // The size tracks viewport height so a short laptop window cannot be
+      // pushed into a scrollbar by a fixed 240px canvas.
+      // Both axes are given a definite length. aspect-square alone is not enough:
+      // the canvas element's intrinsic 150px height wins over an auto height.
+      className={`relative z-10 h-[clamp(96px,18vh,200px)] w-[clamp(96px,18vh,200px)] max-w-full shrink-0
+        transition-transform duration-500 ease-out
+        ${isHovered ? 'scale-[1.06]' : 'scale-100'}`}
+      onPointerEnter={() => setIsHovered(true)}
+      onPointerLeave={() => setIsHovered(false)}
     >
       <Canvas
         camera={{ position: [0, 0, 5], fov: 50 }}
-        gl={{ 
-          alpha: true, 
-          antialias: true,
-          powerPreference: "high-performance",
-          premultipliedAlpha: false
-        }}
+        gl={{ alpha: true, antialias: true, powerPreference: 'high-performance', premultipliedAlpha: false }}
         dpr={[1, 2]}
-        style={{ 
-          width: '100%', 
-          height: '100%',
-          background: 'transparent'
-        }}
+        // The container sits inside main's scroll box. Leaving the measure hook's
+        // scroll tracking on lets a resize land mid-measure and the canvas keeps
+        // its unsized 300x150 default, which renders nothing at all.
+        resize={{ scroll: false, debounce: 0 }}
+        style={{ width: '100%', height: '100%', background: 'transparent' }}
       >
-        <ambientLight intensity={0.6} />
-        <pointLight position={[5, 5, 5]} color={0x38dfff} intensity={2} />
-        <pointLight position={[-5, -5, -5]} color={0x00c8f5} intensity={1.5} />
-        <pointLight position={[0, 5, 0]} color={0x80ebff} intensity={1.8} />
-        <pointLight position={[0, 0, 5]} color={0x38dfff} intensity={1.5} />
-        <HolographicHead mouseX={mouseX} isHovered={isHovered} />
+        {/* Every material here is unlit, so the scene needs no light rig. */}
+        <HolographicHead pointer={pointer} isHovered={isHovered} reducedMotion={reducedMotion} />
       </Canvas>
     </div>
   );
 };
 
 export default HolographicHeadView;
-

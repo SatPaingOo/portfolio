@@ -31,28 +31,29 @@ const App: React.FC = () => {
       case ViewMode.HOME:
       default:
         return (
-          <div className="flex flex-col items-center h-full p-4 md:p-6 text-center z-10 justify-start pt-4 md:pt-6">
-            <div className="mb-3 relative">
-              <div className="flex items-center justify-center">
-                 <HolographicHeadView />
-              </div>
-            </div>
-            <h1 className="text-4xl md:text-6xl font-display font-bold text-white mb-1 tracking-tighter holo-text-shadow">
+          /* min-h-full rather than h-full: short windows let the column grow and
+             scroll instead of overflowing a fixed box, tall ones centre it. The
+             bottom padding keeps the buttons clear of the viewport edge and of
+             the collapsed AURA bubble. */
+          <div className="flex min-h-full flex-col items-center justify-center gap-2 px-4 pt-2 pb-20 text-center z-10 sm:gap-4 sm:pt-6 sm:pb-12 md:px-6">
+            <HolographicHeadView />
+
+            <h1 className="text-4xl md:text-6xl font-display font-bold text-white tracking-tighter holo-text-shadow">
               {PORTFOLIO_DATA.personalInfo.name.toUpperCase()}
             </h1>
-            <p className="text-lg md:text-xl text-holo-400 font-mono tracking-widest mb-5">
+            <p className="text-lg md:text-xl text-holo-400 font-mono tracking-widest">
               {PORTFOLIO_DATA.personalInfo.title}
             </p>
 
-            <div className="glass-panel p-5 md:p-6 max-w-2xl text-base md:text-lg text-gray-300 leading-relaxed border-t border-b border-holo-500/50 mb-6">
+            <div className="glass-panel p-5 md:p-6 max-w-2xl text-base md:text-lg text-gray-300 leading-relaxed border-t border-b border-holo-500/50">
                {PORTFOLIO_DATA.personalInfo.summary}
             </div>
 
-            <div className="flex gap-3 sm:gap-4 flex-wrap justify-center px-4">
-               <button onClick={() => setCurrentView(ViewMode.PROJECTS)} className="px-4 sm:px-6 py-2 sm:py-2.5 md:px-8 md:py-3 bg-holo-900/50 border border-holo-500 hover:bg-holo-500 hover:text-white hover:scale-105 transition-all duration-300 rounded font-display tracking-widest uppercase text-xs sm:text-sm md:text-base shadow-lg shadow-holo-500/20">
+            <div className="mt-1 flex w-full max-w-xs flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center sm:gap-4">
+               <button onClick={() => setCurrentView(ViewMode.PROJECTS)} className="min-h-11 px-6 py-2.5 md:px-8 bg-holo-900/50 border border-holo-500 hover:bg-holo-500 hover:text-white hover:scale-105 transition-all duration-300 rounded font-display tracking-widest uppercase text-sm md:text-base shadow-lg shadow-holo-500/20 sm:min-w-[190px]">
                   View Projects
                </button>
-               <button onClick={() => setCurrentView(ViewMode.SKILLS)} className="px-4 sm:px-6 py-2 sm:py-2.5 md:px-8 md:py-3 bg-transparent border border-holo-700 hover:border-holo-400 hover:text-white hover:scale-105 text-holo-300 transition-all duration-300 rounded font-display tracking-widest uppercase text-xs sm:text-sm md:text-base shadow-lg shadow-holo-500/20">
+               <button onClick={() => setCurrentView(ViewMode.SKILLS)} className="min-h-11 px-6 py-2.5 md:px-8 bg-transparent border border-holo-700 hover:border-holo-400 hover:text-white hover:scale-105 text-holo-300 transition-all duration-300 rounded font-display tracking-widest uppercase text-sm md:text-base shadow-lg shadow-holo-500/20 sm:min-w-[190px]">
                   Tech Stack
                </button>
             </div>

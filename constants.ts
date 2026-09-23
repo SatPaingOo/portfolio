@@ -61,7 +61,9 @@ export const PORTFOLIO_DATA: PortfolioData = {
       responsibilities: [
         "Develop and maintain AXTRA POS and e‑commerce platforms for merchants and members using React, React Native, C#/.NET, MS SQL Server, and Bootstrap.",
         "Implement and evolve core AXTRA POS modules including inventory management, inventory reporting, restaurant floor‑plan configuration, and table reservation/booking workflows.",
-        "Independently designed and developed the Local AXTRA Auto‑Deploy desktop application (React & Electron) that automates IIS site setup, SQL Server database creation/restore, and static IP/network configuration via batch and PowerShell scripts.",
+        "Own the inventory and costing domain: FIFO cost rebuilds and their determinism, package and discount costing, daily inventory balance backfills with a background scheduler, stock adjustments, batch expiry reporting, and the profit and loss figures that depend on them.",
+        "Design and build the offline mode for AXTRA POS as a local-first layer with pull and push stored procedures, host and client device registration, offline guards in the apps, and an embedded Node API kept identical between the React Native merchant app and the Electron desktop POS.",
+        "Independently designed and developed the Local IIS Auto-Deploy desktop product (Electron and React) that turns an 8 to 16 hour AXTRA POS server installation into a 30 to 60 minute guided run covering IIS sites, bundled SQL Server install, database restore, versioned SQL scripts, network setup and version-based updates, packaged for non-technical shop owners as a licensed product.",
         "Develop a car showroom and test‑drive booking web application for automotive dealers, enabling them to upload vehicle listings, manage photos, and handle online enquiries and appointment requests.",
         "Deliver and support AXTRA POS rollouts from Myanmar (2019–2024), then transition to a hybrid on‑site/remote role based in Thailand from 2025 onward.",
         "Collaborate with stakeholders and on‑site teams in Myanmar and Thailand to gather requirements, refine deployment and operations workflows, and continuously improve system performance and usability."
@@ -168,13 +170,26 @@ export const PORTFOLIO_DATA: PortfolioData = {
       }
     },
     {
+      id: 10,
+      title: "Offline-First POS - Hybrid Local DB & Cloud Sync",
+      role: "Full Stack Engineer - Offline Mode & Sync Architecture",
+      technologies: ["C#/.NET 6", "MS SQL Server", "SQLite", "React Native", "Electron", "Node.js", "SignalR"],
+      challenge: "Keep shops selling when the internet or the cloud goes down, with one host device and several client devices on the shop network, then reconcile everything back to the cloud without losing or duplicating orders.",
+      solution: "Designed a local-first layer across the .NET API, the React Native merchant app and the Electron desktop POS. Pull procedures bring catalogue, inventory, orders, tables and users down to the local database, push procedures send orders, cancellations and combined bills back to the cloud, and a device registration table decides which device acts as host while the rest stay read-only clients. The embedded Node API is mirrored byte for byte inside both apps, so one fix serves the phone and the desktop, and offline guards keep online-only screens out of reach while disconnected.",
+      metrics: "Delivered a full tester build in September 2026 covering the Android app, the Windows installer, the published API and the database scripts grouped into required, merge-check and decision tiers. Two rounds of tester findings are documented with root cause and fix, including bill rounding drift, tables leaking across shops, reservations shifted by timezone and bills minted without a number.",
+      links: {
+        liveDemo: null,
+        github: null
+      }
+    },
+    {
       id: 2,
-      title: "Local AXTRA Auto-Deploy Application",
-      role: "Solo Full Stack / DevOps Engineer – AXTRA Deployment Tooling",
-      technologies: ["React", "Electron", "Batch (.bat)", "PowerShell", "IIS", "MS SQL Server"],
-      challenge: "Eliminate slow and error‑prone manual installation of AXTRA POS local servers (IIS sites, SQL databases, and network configuration) at customer locations.",
-      solution: "Independently built a desktop deployment assistant with React and Electron that collects a few configuration inputs, then generates and runs batch/PowerShell scripts to install prerequisites, configure IIS sites, create/restore SQL Server databases, and apply static IP and network settings consistently.",
-      metrics: "Cut on‑site environment provisioning from hours to minutes, reduced configuration mistakes, and standardized AXTRA POS deployments into a repeatable, UI‑driven process.",
+      title: "AXTRA POS Local IIS Auto-Deploy",
+      role: "Solo Developer & Product Owner - Commercial Deployment Tool",
+      technologies: ["Electron", "React 19", "Vite", "PowerShell", "IIS", "MS SQL Server", "Batch (.bat)", "NSIS"],
+      challenge: "Let a shop owner with no IT background stand up a complete AXTRA POS local server alone, instead of paying an engineer to spend a day on IIS, SQL Server, database restore and network configuration.",
+      solution: "Built a Windows desktop app with Electron, React 19 and Vite that runs the whole deployment as guided tasks. It checks the machine, creates IIS sites in either one-site or two-site mode and cleans up the mode it replaces, installs the URL Rewrite module, installs SQL Server from an installer bundled in the app so no internet is needed, creates or restores the database, runs versioned SQL scripts in order and applies network settings. A status panel reports IIS service health with a one-click start, version checks drive updates, and the app ships its own license agreement, user guide, app download links with QR codes and an issue reporter.",
+      metrics: "Turns an 8 to 16 hour expert installation into a 30 to 60 minute guided run that a non-technical owner can finish. Shipped as a licensed proprietary product at version 3.0.2, with an internal pricing analysis placing it between 299 and 1,999 US dollars per license.",
       links: {
         liveDemo: null,
         github: null

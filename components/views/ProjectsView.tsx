@@ -103,7 +103,7 @@ const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, i
           </>
         ) : (
           <p className="flex min-h-11 w-full items-center justify-center rounded border border-dashed border-holo-900 font-mono text-[11px] uppercase tracking-widest text-holo-500">
-            Internal build, no public link
+            Proprietary build, no public link
           </p>
         )}
       </footer>

@@ -183,6 +183,19 @@ export const PORTFOLIO_DATA: PortfolioData = {
       }
     },
     {
+      id: 12,
+      title: "ScanPOS - Retail POS with Local Camera Recognition",
+      role: "Solo Full Stack & Applied AI Engineer - Retail POS Rebuild",
+      technologies: ["C#/.NET 10", "React 19", "TypeScript", "MS SQL Server", "ONNX Runtime", "CLIP ViT-B/32", "YOLOv8n", "SQLite", "Docker"],
+      challenge: "Build a complete retail POS for Myanmar shops with branches, where a cashier adds a product by tapping, scanning, searching or simply pointing the camera at it, running on one Windows PC with no cloud service and no budget.",
+      solution: "Two .NET 10 services behind a React 19 and TypeScript web app. The admin API is the system of record for catalog, stock with batches and expiry, moving average cost, purchasing, shifts, split payments, customers, loyalty, promotions and reports, all over SQL Server procedures. A separate vision service finds products with YOLOv8n boxes and CLIP vectors through ONNX on the processor and keeps the index in a SQLite file, so photos never leave the machine. The till adds a camera match only after it stays accepted across several frames.",
+      metrics: "Built over 161 commits: roughly 519 C# files, 669 TypeScript files, 359 SQL files and 61 test files. Measured against 1,000 products and 20,000 bills the till answers in tens of milliseconds, payment at 15 ms and the dashboard at 460 ms in the median, though the slowest single calls still reach several seconds for a reason not yet found. Recognition thresholds remain untuned for lack of counter photos, so the pipeline runs end to end while the matching has not yet earned trust.",
+      links: {
+        liveDemo: null,
+        github: null
+      }
+    },
+    {
       id: 10,
       title: "Offline-First POS - Hybrid Local DB & Cloud Sync",
       role: "Full Stack Engineer - Offline Mode & Sync Architecture",

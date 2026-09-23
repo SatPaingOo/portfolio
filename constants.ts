@@ -183,6 +183,19 @@ export const PORTFOLIO_DATA: PortfolioData = {
       }
     },
     {
+      id: 13,
+      title: "kiriya - Cross-Platform Developer CLI & MCP Server",
+      role: "Solo Developer - Published npm Package",
+      technologies: ["TypeScript", "Node.js", "Model Context Protocol", "npm", "GitHub Actions", "Cross-Platform CI"],
+      challenge: "Stop rewriting the same throwaway script on every machine. Finding a port, ending a process, copying to the clipboard or deleting a folder all take different commands on Windows, Linux and macOS, and the dangerous ones are the easiest to get wrong.",
+      solution: "One Node program with no runtime dependencies and seventeen modules covering files, ports, processes, networking, environment, clipboard, archives, conversion, git, docker and waiting. Every command answers in JSON, a change touching many files shows its plan first, deletions go to the trash, and nothing irreversible happens without a typed confirmation. The same commands are served to AI agents over the Model Context Protocol under those same rules, offering only what changes nothing until the operator allows more.",
+      metrics: "Published to npm as kiriya and installed with a single command on Node 22.13 or later, released from CI with provenance so anyone can check which workflow built their copy. Covered by 94 test files that run on Windows, Linux and macOS against Node 22, Node 24 and the current release.",
+      links: {
+        liveDemo: "https://www.npmjs.com/package/kiriya",
+        github: "https://github.com/SatPaingOo/kiriya"
+      }
+    },
+    {
       id: 12,
       title: "ScanPOS - Retail POS with Local Camera Recognition",
       role: "Solo Full Stack & Applied AI Engineer - Retail POS Rebuild",

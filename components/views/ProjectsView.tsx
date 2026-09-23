@@ -87,7 +87,7 @@ const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, i
                 rel="noopener noreferrer"
                 className="flex min-h-11 flex-1 items-center justify-center rounded border border-holo-500 bg-holo-600/20 text-xs font-bold uppercase tracking-wider text-holo-100 transition-colors hover:bg-holo-500/40 hover:text-white"
               >
-                Live Demo
+                {/npmjs\.com/.test(project.links.liveDemo) ? 'npm Package' : 'Live Demo'}
               </a>
             )}
             {project.links.github && (

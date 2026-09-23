@@ -63,7 +63,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
         "Implement and evolve core AXTRA POS modules including inventory management, inventory reporting, restaurant floor‑plan configuration, and table reservation/booking workflows.",
         "Own the inventory and costing domain: FIFO cost rebuilds and their determinism, package and discount costing, daily inventory balance backfills with a background scheduler, stock adjustments, batch expiry reporting, and the profit and loss figures that depend on them.",
         "Design and build the offline mode for AXTRA POS as a local-first layer with pull and push stored procedures, host and client device registration, offline guards in the apps, and an embedded Node API kept identical between the React Native merchant app and the Electron desktop POS.",
-        "Independently designed and developed the Local IIS Auto-Deploy desktop product (Electron and React) that turns an 8 to 16 hour AXTRA POS server installation into a 30 to 60 minute guided run covering IIS sites, bundled SQL Server install, database restore, versioned SQL scripts, network setup and version-based updates, packaged for non-technical shop owners as a licensed product.",
+        "Independently designed and developed the Local IIS Auto-Deploy desktop application (Electron and React) that turns an 8 to 16 hour AXTRA POS server installation into a 30 to 60 minute guided run covering IIS sites, bundled SQL Server install, database restore, versioned SQL scripts, network setup and version-based updates, packaged so a non-technical shop owner can run it.",
         "Develop a car showroom and test‑drive booking web application for automotive dealers, enabling them to upload vehicle listings, manage photos, and handle online enquiries and appointment requests.",
         "Deliver and support AXTRA POS rollouts from Myanmar (2019–2024), then transition to a hybrid on‑site/remote role based in Thailand from 2025 onward.",
         "Collaborate with stakeholders and on‑site teams in Myanmar and Thailand to gather requirements, refine deployment and operations workflows, and continuously improve system performance and usability."
@@ -170,6 +170,19 @@ export const PORTFOLIO_DATA: PortfolioData = {
       }
     },
     {
+      id: 11,
+      title: "EventPulse - Event-Driven Market Intelligence",
+      role: "Solo Applied AI Engineer - LLM Pipeline & Self-Scored Track Record",
+      technologies: ["Python", "GitHub Actions", "Groq", "OpenRouter", "GitHub Pages", "pytest"],
+      challenge: "Explain why gold, oil and large company prices moved, and keep an honest record of whether those explanations predict anything, without paying for a model, a server or a data feed.",
+      solution: "Built a Python pipeline that ingests prices and news, extracts events, writes a causal note for every significant move, then makes structured predictions carrying direction, horizon, threshold and confidence. Scoring is deterministic and never touches a model, so the track record cannot flatter itself. Free models do the writing through a pool that falls through Groq to OpenRouter, lists free text and JSON capable models at run time, rests any model that rate limits and drops one that disappears. The core knows nothing about GitHub: a scheduled Actions workflow calls the command line interface, commits the records and publishes the static site.",
+      metrics: "After a bug was found that voided predictions on their expiry day, every expired prediction was rescored: 294 of them, 108 hits and 186 misses, a 36.7 percent hit rate the site publishes as it stands. The whole system runs on free tiers, and it is published as research rather than financial advice.",
+      links: {
+        liveDemo: "https://satpaingoo.github.io/eventpulse/",
+        github: null
+      }
+    },
+    {
       id: 10,
       title: "Offline-First POS - Hybrid Local DB & Cloud Sync",
       role: "Full Stack Engineer - Offline Mode & Sync Architecture",
@@ -185,11 +198,11 @@ export const PORTFOLIO_DATA: PortfolioData = {
     {
       id: 2,
       title: "AXTRA POS Local IIS Auto-Deploy",
-      role: "Solo Developer & Product Owner - Commercial Deployment Tool",
+      role: "Solo Developer - AXTRA POS Deployment Tooling",
       technologies: ["Electron", "React 19", "Vite", "PowerShell", "IIS", "MS SQL Server", "Batch (.bat)", "NSIS"],
       challenge: "Let a shop owner with no IT background stand up a complete AXTRA POS local server alone, instead of paying an engineer to spend a day on IIS, SQL Server, database restore and network configuration.",
       solution: "Built a Windows desktop app with Electron, React 19 and Vite that runs the whole deployment as guided tasks. It checks the machine, creates IIS sites in either one-site or two-site mode and cleans up the mode it replaces, installs the URL Rewrite module, installs SQL Server from an installer bundled in the app so no internet is needed, creates or restores the database, runs versioned SQL scripts in order and applies network settings. A status panel reports IIS service health with a one-click start, version checks drive updates, and the app ships its own license agreement, user guide, app download links with QR codes and an issue reporter.",
-      metrics: "Turns an 8 to 16 hour expert installation into a 30 to 60 minute guided run that a non-technical owner can finish. Shipped as a licensed proprietary product at version 3.0.2, with an internal pricing analysis placing it between 299 and 1,999 US dollars per license.",
+      metrics: "Turns an 8 to 16 hour expert installation into a 30 to 60 minute guided run that a non-technical shop owner can finish. Now at version 3.0.2, shipped as a licensed Windows build for AXTRA POS deployments with in-app guides, version checks, app download links and an issue reporter.",
       links: {
         liveDemo: null,
         github: null

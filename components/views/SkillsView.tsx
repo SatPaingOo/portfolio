@@ -1,6 +1,18 @@
-import React from 'react';
-import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, Tooltip } from 'recharts';
+import React, { Suspense, lazy } from 'react';
 import { PORTFOLIO_DATA } from '../../constants';
+
+const SkillsRadar = lazy(() => import('./SkillsRadar'));
+
+/**
+ * Each tier gets its own label *and* its own colour. Everything short of
+ * Expert used to render in one grey, which left "Proficient" and "Familiar"
+ * indistinguishable; the shared grey also sat under the 4.5:1 contrast floor.
+ */
+const TIERS: { [key: string]: { label: string; className: string } } = {
+    Expert: { label: 'EXP', className: 'bg-holo-900/70 text-holo-200' },
+    Proficient: { label: 'PRO', className: 'bg-holo-950/70 text-holo-400' },
+    Familiar: { label: 'FAM', className: 'text-gray-300' },
+};
 
 // Mapping levels to numbers for chart
 const levelMap: { [key: string]: number } = {
@@ -42,6 +54,13 @@ const getAllSkills = () => {
     })).slice(0, 10); // Limit to top 10 for visual clarity in this demo
 };
 
+/** Shown while the chart chunk arrives, and if there is nothing to plot. */
+const ChartPlaceholder: React.FC = () => (
+    <div className="w-full h-full flex items-center justify-center">
+        <p className="text-holo-300 font-mono text-sm">Loading chart data...</p>
+    </div>
+);
+
 const SkillsView: React.FC = () => {
     const data = getAllSkills();
 
@@ -71,53 +90,11 @@ const SkillsView: React.FC = () => {
                 </div>
 
                 {data && data.length > 0 ? (
-                    <ResponsiveContainer width="100%" height="100%" minHeight={300}>
-                        <RadarChart
-                            cx="50%"
-                            cy="50%"
-                            outerRadius="70%"
-                            data={data}
-                            margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
-                        >
-                            <PolarGrid stroke="#005870" />
-                            <PolarAngleAxis
-                                dataKey="subject"
-                                tick={{
-                                    fill: '#80ebff',
-                                    fontSize: 11,
-                                    fontFamily: 'Rajdhani'
-                                }}
-                                tickLine={false}
-                            />
-                            <PolarRadiusAxis
-                                angle={30}
-                                domain={[0, 100]}
-                                tick={false}
-                                axisLine={false}
-                            />
-                            <Radar
-                                name="Proficiency"
-                                dataKey="A"
-                                stroke="#38dfff"
-                                strokeWidth={3}
-                                fill="#00c8f5"
-                                fillOpacity={0.4}
-                            />
-                            <Tooltip
-                                contentStyle={{
-                                    backgroundColor: 'rgba(2, 6, 23, 0.9)',
-                                    borderColor: '#0086aa',
-                                    color: '#fff',
-                                    fontSize: '12px'
-                                }}
-                                itemStyle={{ color: '#38dfff' }}
-                            />
-                        </RadarChart>
-                    </ResponsiveContainer>
+                    <Suspense fallback={<ChartPlaceholder />}>
+                        <SkillsRadar data={data} />
+                    </Suspense>
                 ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                        <p className="text-holo-400 font-mono text-sm">Loading chart data...</p>
-                    </div>
+                    <ChartPlaceholder />
                 )}
             </div>
 
@@ -131,10 +108,9 @@ const SkillsView: React.FC = () => {
                             {items.map((skill) => (
                                 <li key={skill.name} className="flex justify-between items-start sm:items-center gap-2 text-[10px] sm:text-xs font-mono">
                                     <span className="text-gray-300 break-words flex-1 min-w-0">{skill.name}</span>
-                                    <span className={`
-                                    px-1 rounded flex-shrink-0
-                                    ${skill.level === 'Expert' ? 'text-holo-300' : 'text-gray-500'}
-                                `}>{skill.level === 'Expert' ? 'EXP' : skill.level === 'Proficient' ? 'PRO' : 'FAM'}</span>
+                                    <span className={`px-1 rounded flex-shrink-0 ${TIERS[skill.level]?.className ?? TIERS.Familiar.className}`}>
+                                        {TIERS[skill.level]?.label ?? skill.level.slice(0, 3).toUpperCase()}
+                                    </span>
                                 </li>
                             ))}
                         </ul>

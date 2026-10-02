@@ -106,10 +106,12 @@ test.describe('Skills view', () => {
 
   test('the legend describes something the chart actually plots', async ({ page }) => {
     await open(page, 'SKILLS');
-    const plotted = await page.evaluate(() => document.querySelectorAll('.recharts-radar').length);
+    // recharts sits behind a lazy boundary, so the series arrives a tick or
+    // two after the click rather than with it. Same assertion, waited for.
+    const series = page.locator('.recharts-radar');
+    await expect(series, 'only one series is drawn').toHaveCount(1);
     const legendRows = await page.locator('text=/Expert \(100\)|Proficient \(75\)|Familiar \(50\)/').count();
-    expect(plotted, 'only one series is drawn').toBe(1);
-    expect(legendRows, `the legend shows ${legendRows} swatches for ${plotted} series`).toBeLessThanOrEqual(plotted);
+    expect(legendRows, `the legend shows ${legendRows} swatches for 1 series`).toBeLessThanOrEqual(1);
   });
 
   test('proficiency tiers are distinguishable without colour alone', async ({ page }) => {

@@ -16,7 +16,15 @@ test.describe('Delivery weight', () => {
     await page.waitForLoadState('networkidle');
 
     const total = js.reduce((s, f) => s + f.bytes, 0);
-    const heavy = js.filter((f) => f.bytes > 150_000).map((f) => `${f.url} ${(f.bytes / 1024).toFixed(0)}kB`);
+    // React itself is exempt: the page has nothing to render until the
+    // renderer is there, and react-dom does not split. Its weight is held in
+    // check by the total budget below instead. Everything else - three.js,
+    // recharts, a view - is a feature, and a feature belongs behind a lazy
+    // boundary rather than in front of first paint.
+    const heavy = js
+      .filter((f) => !f.url.startsWith('react-vendor-'))
+      .filter((f) => f.bytes > 150_000)
+      .map((f) => `${f.url} ${(f.bytes / 1024).toFixed(0)}kB`);
 
     test.info().annotations.push({ type: 'js-payload', description: `${(total / 1024).toFixed(0)} kB across ${js.length} files` });
     expect(heavy, 'heavy vendor chunks load before first paint; use React.lazy').toEqual([]);

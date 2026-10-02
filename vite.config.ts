@@ -32,11 +32,25 @@ export default defineConfig(({ mode }) => {
     build: {
       rollupOptions: {
         output: {
-          manualChunks: {
-            'react-vendor': ['react', 'react-dom'],
-            // three.js is deliberately not listed. HeroHead lazy-loads it, and a
-            // manual chunk pulls shared modules in and forces an eager preload.
-            'chart-vendor': ['recharts']
+          // Only React is split out by hand. Everything else follows its
+          // import: recharts rides along in the lazy chart chunk, three.js in
+          // the lazy head chunk.
+          //
+          // Matched on the module id rather than listed by package name. The
+          // list form named 'react-dom', which is the package entry nothing
+          // imports: the app uses 'react-dom/client', so the whole 190 kB
+          // renderer stayed behind in the entry chunk and react-vendor came
+          // out at 12 kB. Rollup gives ids POSIX separators on every platform.
+          manualChunks(id: string) {
+            // Rollup's CommonJS interop helpers are shared by every CJS
+            // package in the build. Left to land wherever, they went into the
+            // recharts chunk and react-vendor imported them back out of it,
+            // making the two circular: the recharts chunk then evaluated
+            // first and read forwardRef off an uninitialised React. Pinning
+            // the helpers beside React breaks the cycle.
+            if (id.includes('commonjsHelpers')) return 'react-vendor';
+            if (/node_modules\/(react|react-dom|scheduler)\//.test(id)) return 'react-vendor';
+            return undefined;
           }
         }
       },

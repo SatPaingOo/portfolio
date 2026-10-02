@@ -1,0 +1,42 @@
+name: e2e
+
+# Reported, not gating. The suite currently fails 71 of its 162 checks, all of
+# them pre-existing findings about the UI rather than broken tests, and wiring
+# the deploy to them would mean nothing ships until every one is answered.
+# Once the count is zero this becomes a required job in pages.yml.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Every project in playwright.config.ts is Chromium - desktop, a tablet
+      # viewport and a Pixel 5 - so the other engines are not downloaded.
+      - run: npx playwright install --with-deps chromium
+
+      # The suite builds the site itself and serves it with vite preview, so
+      # what is tested is the production bundle rather than the dev server.
+      - run: npm test
+
+      - name: Keep the report whatever the outcome
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: e2e-report
+          retention-days: 14

@@ -46,58 +46,79 @@ export const formatText = (text: string) => {
   });
 };
 
+/** Reveal rate, matching the 15ms-per-character cadence this ran at before. */
+const TYPE_CPS = 1000 / 15;
+
 export const TypingText: React.FC<{
   text: string;
   messageId: string;
   onComplete: () => void;
   isAlreadyComplete: boolean;
 }> = ({ text, messageId, onComplete, isAlreadyComplete }) => {
-  const [displayedText, setDisplayedText] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isComplete, setIsComplete] = useState(false);
+  const [shown, setShown] = useState(isAlreadyComplete ? text.length : 0);
+  // The call site passes a fresh arrow every render, so the callback is held
+  // in a ref: the reveal must not restart because the panel re-rendered.
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
   useEffect(() => {
-    if (isAlreadyComplete || isComplete) {
-      setDisplayedText(text);
-      setIsComplete(true);
+    if (isAlreadyComplete) {
+      setShown(text.length);
       return;
     }
 
-    if (currentIndex < text.length) {
-      const timeout = setTimeout(() => {
-        setDisplayedText(text.slice(0, currentIndex + 1));
-        setCurrentIndex(currentIndex + 1);
-      }, 15);
-      return () => clearTimeout(timeout);
-    } else if (currentIndex >= text.length && !isComplete) {
-      setIsComplete(true);
-      onComplete();
+    // A typewriter is motion, so a visitor who asked for less does not get it.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setShown(text.length);
+      onCompleteRef.current();
+      return;
     }
-  }, [currentIndex, text, isAlreadyComplete, isComplete, onComplete]);
 
-  useEffect(() => {
-    if (!isAlreadyComplete) {
-      setDisplayedText('');
-      setCurrentIndex(0);
-      setIsComplete(false);
-    }
-  }, [messageId, isAlreadyComplete]);
+    setShown(0);
+    const started = performance.now();
+    let frame = 0;
 
-  return <>{formatText(displayedText)}</>;
+    const step = (now: number) => {
+      // Advanced by elapsed time rather than one timeout per character. The
+      // old chain queued a 15ms timeout per letter and each one waited on a
+      // re-render, so on a phone also drawing the WebGL hero a short answer
+      // took over five seconds to finish. A dropped frame now catches up
+      // instead of stretching the reveal out.
+      const next = Math.min(text.length, Math.ceil(((now - started) / 1000) * TYPE_CPS));
+      setShown(next);
+      if (next < text.length) {
+        frame = requestAnimationFrame(step);
+      } else {
+        onCompleteRef.current();
+      }
+    };
+
+    frame = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frame);
+  }, [messageId, text, isAlreadyComplete]);
+
+  return <>{formatText(text.slice(0, shown))}</>;
 };
 
 interface ChatInterfaceProps {
   onViewChange: (view: any) => void;
-  /** So the page can reserve room for the panel rather than be covered by it. */
-  onOpenChange?: (open: boolean) => void;
+  /**
+   * Open state lives in App, which reserves the panel's room rather than
+   * letting it sit on the page. Owned there rather than mirrored back from
+   * here, so opening or closing the panel and resizing the page around it are
+   * one render: reported through a callback, there was a commit in between
+   * where the panel had already collapsed but `main` still held 456px open
+   * for it, and anything measuring in that window saw the squeezed layout.
+   */
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange, onOpenChange }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange, open: isOpen, onOpenChange: setIsOpen }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [isOpen, setIsOpen] = useState(true);
   const hasInitialized = useRef(false); // Prevent double execution in React StrictMode
   const completedTypingMessages = useRef<Set<string>>(new Set()); // Track messages that finished typing
 
@@ -117,10 +138,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange, onOpenChang
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
-
-  useEffect(() => {
-    onOpenChange?.(isOpen);
-  }, [isOpen, onOpenChange]);
 
   const handleSendMessage = async (text: string, isInitial = false) => {
     if (!text.trim()) return;

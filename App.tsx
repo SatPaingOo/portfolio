@@ -300,7 +300,7 @@ const App: React.FC = () => {
       </main>
 
       {/* Aura Chat Interface */}
-      <ChatInterface onViewChange={handleViewChange} onOpenChange={setChatOpen} />
+      <ChatInterface onViewChange={handleViewChange} open={chatOpen} onOpenChange={setChatOpen} />
     </div>
   );
 };

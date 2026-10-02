@@ -79,12 +79,19 @@ const App: React.FC = () => {
              bottom padding keeps the buttons clear of the viewport edge and of
              the collapsed AURA bubble. */
           <div className="flex min-h-full flex-col items-center justify-center gap-2 px-4 pt-2 pb-20 text-center z-10 sm:gap-4 sm:pt-6 sm:pb-12 md:px-6">
-            {/* Below lg this group owns the first screen, so the name and both
-                calls to action sit above the AURA sheet rather than under it,
-                and the summary begins on the next scroll instead of being cut
-                in half. At lg the wrapper dissolves with `contents` and the
-                explicit orders restore the original reading order. */}
-            <div className="flex w-full flex-col items-center justify-start gap-2 max-lg:min-h-[calc(100dvh-3.5rem)] sm:gap-4 lg:contents">
+            {/* Below lg, while the AURA sheet is open, this group owns the
+                first screen: the name and both calls to action sit above the
+                sheet rather than under it, and the summary begins on the next
+                scroll instead of being cut in half. Once the sheet is
+                collapsed there is nothing to clear, and holding the group at
+                full height would force a scroll onto a window that has room
+                for the whole hero. At lg the wrapper dissolves with `contents`
+                and the explicit orders restore the original reading order. */}
+            <div
+              className={`flex w-full flex-col items-center justify-start gap-2 sm:gap-4 lg:contents ${
+                chatOpen ? 'max-lg:min-h-[calc(100dvh-3.5rem)]' : ''
+              }`}
+            >
               <HeroHead />
 
               <h1 className="lg:order-2 text-4xl md:text-6xl font-display font-bold text-white tracking-tighter holo-text-shadow">

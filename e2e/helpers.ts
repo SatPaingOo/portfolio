@@ -25,13 +25,30 @@ export function chatPanel(page: Page): Locator {
   return page.locator('div.glass-panel').filter({ has: page.getByRole('textbox', { name: /Ask AURA/i }) });
 }
 
-/** Collapse the chat so the rest of the UI is reachable. */
+/**
+ * Collapse the chat so the rest of the UI is reachable.
+ *
+ * The room the page reserves for the panel is sized in `dvh`, and Chromium
+ * re-resolves dynamic viewport units on a frame boundary rather than when the
+ * class goes away: for one frame after the panel closes, `main` still measures
+ * with the bottom sheet's 47dvh in place, even though its class attribute no
+ * longer carries it. Anything measuring the hero straight after this would read
+ * that stale frame, so wait for the layout to land.
+ */
 export async function closeChat(page: Page) {
   const collapse = page.locator('button:has(svg path[d^="M19.5 8.25"])');
   if (await collapse.count()) {
     await collapse.first().click();
     await expect(page.getByRole('textbox', { name: /Ask AURA/i })).toBeHidden();
+    await settleLayout(page);
   }
+}
+
+/** Wait for the browser to paint, so dvh-sized boxes report their new size. */
+export async function settleLayout(page: Page) {
+  await page.evaluate(
+    () => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))),
+  );
 }
 
 export async function askAura(page: Page, question: string) {

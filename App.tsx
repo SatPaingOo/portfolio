@@ -177,7 +177,7 @@ const App: React.FC = () => {
               <button
                 key={mode}
                 onClick={() => handleViewChange(mode)}
-                className={`flex min-h-11 items-center px-1 text-xs lg:text-sm tracking-widest font-mono uppercase transition-all whitespace-nowrap ${
+                className={`flex min-h-11 min-w-11 items-center justify-center px-1 text-xs lg:text-sm tracking-widest font-mono uppercase transition-all whitespace-nowrap ${
                   currentView === mode
                     ? 'text-white border-b-2 border-holo-400'
                     : 'text-gray-400 hover:text-holo-300'

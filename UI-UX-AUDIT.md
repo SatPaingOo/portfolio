@@ -329,7 +329,7 @@ finish, re-rendering the message list on every character, with no way to skip.
 
 ## P3 — Payload, dead code, and metadata
 
-### 25. 1.4 MB of JavaScript loads before the hero paints
+### 25. 1.4 MB of JavaScript loads before the hero paints — **[fixed]**
 
 Production build output:
 
@@ -350,11 +350,23 @@ Fix: `React.lazy` plus `Suspense` for `HolographicHeadView` and `SkillsView`,
 render a static SVG or CSS poster as the fallback, and consider replacing
 recharts with a hand-rolled SVG radar (about 40 lines) to delete 314 kB.
 
-Partly fixed: three.js is now lazy-loaded through `HeroHead`, with the SVG head
-as its placeholder, and `index.html` no longer preloads it. recharts is still
-eager because `SkillsView` is imported statically. The landing-payload test
-still fails for that reason, and because it also counts the three.js chunk
-that downloads right after first paint.
+Fixed. The landing page is down to 284 kB raw (88 kB gzipped) across two
+chunks:
+
+| Chunk | Raw | Gzip | When |
+|---|---|---|---|
+| `react-vendor` | 202 kB | 62 kB | on arrival |
+| `index` | 82 kB | 25 kB | on arrival |
+| `SkillsRadar` (recharts) | 314 kB | 94 kB | opening SKILLS |
+| `HolographicHeadView` (three.js) | 887 kB | 244 kB | after `load` |
+
+recharts moved behind a lazy boundary with the plot itself, in `SkillsRadar`;
+the heading, the legend and the tier lists still render with the view. three.js
+waits for the `load` event, then a settle, then an idle callback, so the SVG
+head carries the hero until everything else has had the network and the main
+thread. `react-vendor` was 12 kB because `manualChunks` named `react-dom`,
+the package entry nothing imports — the app uses `react-dom/client`, so the
+renderer had been sitting in `index` all along.
 
 ### 26. Dead code and an unused dependency
 
@@ -363,9 +375,10 @@ that downloads right after first paint.
   duplicated into the bundle as a string.
 - `initializeChat` and `isApiAvailable` are imported by `ChatInterface.tsx:2`
   and never called.
-- `Legend` is imported from recharts in `SkillsView.tsx:2` and never used.
-- `@react-three/drei` appears in `vite.config.ts:31` `manualChunks` but is never
-  imported by any source file.
+- `Legend` was imported from recharts in `SkillsView.tsx` and never used —
+  **[fixed]**, the import went with the chart when it moved to `SkillsRadar`.
+- `@react-three/drei` was a dependency no source file imported — **[fixed]**,
+  dropped from `package.json`, which took 41 transitive packages with it.
 
 ### 27. `GEMINI_API_KEY` would be inlined into the client bundle
 

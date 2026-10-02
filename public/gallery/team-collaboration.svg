@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img">
+  <title>Team Collaboration</title>
+  <desc>Placeholder artwork: three figures around a shared service graph, drawn in the portfolio's holographic line style.</desc>
+
+  <defs>
+    <radialGradient id="sky" cx="50%" cy="38%" r="75%">
+      <stop offset="0%" stop-color="#00485d"/>
+      <stop offset="55%" stop-color="#021a26"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </radialGradient>
+    <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#38dfff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#38dfff" stop-opacity=".5"/>
+    </linearGradient>
+    <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+      <path d="M80 0H0v80" fill="none" stroke="#0086aa" stroke-opacity=".22" stroke-width="1"/>
+    </pattern>
+    <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="2" fill="#020617" fill-opacity=".30"/>
+    </pattern>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <rect width="1600" height="900" fill="url(#grid)"/>
+
+  <!-- horizon -->
+  <path d="M0 640h1600" stroke="#00c8f5" stroke-opacity=".35" stroke-width="2"/>
+  <rect y="640" width="1600" height="260" fill="url(#fade)" fill-opacity=".10"/>
+
+  <!-- service graph the team is gathered around -->
+  <g fill="none" stroke="#38dfff" stroke-opacity=".55" stroke-width="2">
+    <path d="M800 232 614 352 800 472 986 352Z"/>
+    <path d="M800 232v240M614 352h372"/>
+    <path d="M614 352 430 268M986 352l184-84M800 472v96"/>
+  </g>
+  <g fill="#020617" stroke="#38dfff" stroke-width="3">
+    <circle cx="800" cy="232" r="22"/>
+    <circle cx="614" cy="352" r="18"/>
+    <circle cx="986" cy="352" r="18"/>
+    <circle cx="800" cy="472" r="18"/>
+    <circle cx="430" cy="268" r="12"/>
+    <circle cx="1170" cy="268" r="12"/>
+  </g>
+  <g fill="#80ebff" fill-opacity=".9">
+    <circle cx="800" cy="232" r="7"/>
+    <circle cx="614" cy="352" r="5"/>
+    <circle cx="986" cy="352" r="5"/>
+    <circle cx="800" cy="472" r="5"/>
+  </g>
+
+  <!-- three figures at a shared desk -->
+  <g fill="none" stroke="#00c8f5" stroke-width="4" stroke-linecap="round">
+    <g stroke-opacity=".75">
+      <circle cx="420" cy="600" r="38"/>
+      <path d="M344 724a76 76 0 0 1 152 0"/>
+    </g>
+    <g stroke-opacity=".95">
+      <circle cx="800" cy="582" r="44"/>
+      <path d="M712 724a88 88 0 0 1 176 0"/>
+    </g>
+    <g stroke-opacity=".75">
+      <circle cx="1180" cy="600" r="38"/>
+      <path d="M1104 724a76 76 0 0 1 152 0"/>
+    </g>
+  </g>
+  <path d="M232 726h1136" stroke="#38dfff" stroke-opacity=".7" stroke-width="3"/>
+  <path d="M300 726v44M1300 726v44" stroke="#0086aa" stroke-opacity=".6" stroke-width="3"/>
+
+  <!-- corner brackets -->
+  <g fill="none" stroke="#38dfff" stroke-width="4">
+    <path d="M56 116V56h60M1484 56h60v60M1544 784v60h-60M116 844H56v-60"/>
+  </g>
+
+  <text x="56" y="828" fill="#38dfff" fill-opacity=".85" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="26" letter-spacing="7">// IMG_09 &#183; TEAM COLLABORATION</text>
+  <text x="1544" y="828" text-anchor="end" fill="#0086aa" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="26" letter-spacing="7">PLACEHOLDER</text>
+
+  <rect width="1600" height="900" fill="url(#scan)"/>
+</svg>

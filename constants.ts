@@ -1,5 +1,8 @@
 import { PortfolioData } from './types';
 
+/** Gallery art is served from public/, so it follows Vite's base path. */
+const asset = (file: string) => `${import.meta.env.BASE_URL}${file}`;
+
 export const PORTFOLIO_DATA: PortfolioData = {
   personalInfo: {
     name: "Sat Paing Oo",
@@ -318,7 +321,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
       id: 9,
       title: "Team Collaboration",
       description: "Development team working on microservices architecture",
-      imageUrl: "https://picsum.photos/800/600?random=8",
+      imageUrl: asset("gallery/team-collaboration.svg"),
       category: "Personal",
       date: "2024"
     },

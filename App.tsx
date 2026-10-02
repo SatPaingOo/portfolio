@@ -127,7 +127,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="relative w-full h-screen overflow-hidden font-sans fixed inset-0 max-w-full">
+    <div id="app-shell" className="relative w-full h-screen overflow-hidden font-sans fixed inset-0 max-w-full">
       <HoloBackground />
 
       {/* Top Navigation Bar */}

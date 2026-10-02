@@ -14,9 +14,7 @@ export default defineConfig({
   fullyParallel: true,
   // The hero renders a WebGL scene. Headless Chromium draws it in software, and
   // too many at once starve each other of CPU and time out. Three suits this
-  // machine; a CI runner has far fewer cores, and three there starved the app
-  // so badly that React had not mounted before the assertions ran — the whole
-  // suite failed as though the site were broken.
+  // machine; a runner has fewer cores, so it gets one.
   workers: process.env['CI'] === undefined ? 3 : 1,
   reporter: [['list'], ['html', { outputFolder: 'e2e-report', open: 'never' }]],
   use: {

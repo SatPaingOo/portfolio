@@ -5,14 +5,14 @@ import HologramHead from './HologramHead';
 const Head3D = lazy(() => import('./HolographicHeadView'));
 
 /**
- * Bust size. Height-led so a tall desktop window gets a large bust while short
- * laptop windows keep the hero free of scrollbars, and capped by width so a
- * phone's wrapped summary still fits. Tuned against measured free space:
- * 1280x620 fits up to 129px (gets 115), 375x812 up to 186px (gets 172),
- * 1440x900 up to 409px (gets 335). Underscores are Tailwind's spaces; CSS math
- * needs them around the minus sign.
+ * Bust size, led by the space the hero actually has. Below lg the AURA panel
+ * is a bottom sheet and the hero keeps roughly half the window, so the bust
+ * stays small enough that the name and both buttons are on screen on arrival.
+ * From lg the panel moves to the corner and the full height is available.
  */
-const SIZE = 'h-[clamp(96px,min(78.6vh_-_372px,46vw),360px)] w-[clamp(96px,min(78.6vh_-_372px,46vw),360px)]';
+const SIZE =
+  'h-[clamp(72px,min(20vh,30vw),220px)] w-[clamp(72px,min(20vh,30vw),220px)] ' +
+  'lg:h-[clamp(96px,min(50vh,28vw),360px)] lg:w-[clamp(96px,min(50vh,28vw),360px)]';
 
 const hasWebGL = () => {
   try {
@@ -31,7 +31,7 @@ const HeroHead: React.FC = () => {
   const webgl = useMemo(hasWebGL, []);
 
   return (
-    <div data-testid="hero-head" aria-hidden="true" className={`relative z-10 ${SIZE} max-w-full shrink-0`}>
+    <div data-testid="hero-head" aria-hidden="true" className={`relative z-10 lg:order-1 ${SIZE} max-w-full shrink-0`}>
       {/* Glow halo shared by both renderings, so the swap does not flash. */}
       <div className="pointer-events-none absolute -inset-[16%] rounded-full bg-[radial-gradient(circle,rgba(0,200,245,0.30)_0%,rgba(0,171,209,0.12)_36%,transparent_68%)] blur-xl motion-safe:animate-pulse-slow" />
 

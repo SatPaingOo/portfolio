@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import HoloBackground from './components/HoloBackground';
 import ChatInterface from './components/ChatInterface';
 import ProjectsView from './components/views/ProjectsView';
@@ -9,14 +9,44 @@ import HeroHead from './components/HeroHead';
 import { ViewMode } from './types';
 import { PORTFOLIO_DATA } from './constants';
 
-const App: React.FC = () => {
-  const [currentView, setCurrentView] = useState<ViewMode>(ViewMode.HOME);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+/**
+ * The view lives in the URL, so a view can be linked to, bookmarked and
+ * reached with the back button. A hash is used rather than a path because
+ * GitHub Pages serves static files and cannot rewrite unknown paths to
+ * index.html.
+ */
+const viewFromHash = (hash: string): ViewMode => {
+  const name = hash.replace(/^#\/?/, '').toUpperCase();
+  return (Object.values(ViewMode) as string[]).includes(name) ? (name as ViewMode) : ViewMode.HOME;
+};
 
-  const handleViewChange = (view: ViewMode) => {
+const hashForView = (view: ViewMode): string => (view === ViewMode.HOME ? '#/' : `#/${view.toLowerCase()}`);
+
+const App: React.FC = () => {
+  const [currentView, setCurrentView] = useState<ViewMode>(() =>
+    viewFromHash(typeof window === 'undefined' ? '' : window.location.hash),
+  );
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(true);
+
+  const handleViewChange = useCallback((view: ViewMode) => {
     setCurrentView(view);
     setSidebarOpen(false);
-  };
+    if (window.location.hash !== hashForView(view)) {
+      window.history.pushState(null, '', hashForView(view));
+    }
+  }, []);
+
+  // Back and forward move between views rather than leaving the site.
+  useEffect(() => {
+    const sync = () => setCurrentView(viewFromHash(window.location.hash));
+    window.addEventListener('popstate', sync);
+    window.addEventListener('hashchange', sync);
+    return () => {
+      window.removeEventListener('popstate', sync);
+      window.removeEventListener('hashchange', sync);
+    };
+  }, []);
 
   const renderView = () => {
     switch (currentView) {
@@ -36,26 +66,40 @@ const App: React.FC = () => {
              bottom padding keeps the buttons clear of the viewport edge and of
              the collapsed AURA bubble. */
           <div className="flex min-h-full flex-col items-center justify-center gap-2 px-4 pt-2 pb-20 text-center z-10 sm:gap-4 sm:pt-6 sm:pb-12 md:px-6">
-            <HeroHead />
+            {/* Below lg this group owns the first screen, so the name and both
+                calls to action sit above the AURA sheet rather than under it,
+                and the summary begins on the next scroll instead of being cut
+                in half. At lg the wrapper dissolves with `contents` and the
+                explicit orders restore the original reading order. */}
+            <div className="flex w-full flex-col items-center justify-start gap-2 max-lg:min-h-[calc(100dvh-3.5rem)] sm:gap-4 lg:contents">
+              <HeroHead />
 
-            <h1 className="text-4xl md:text-6xl font-display font-bold text-white tracking-tighter holo-text-shadow">
-              {PORTFOLIO_DATA.personalInfo.name.toUpperCase()}
-            </h1>
-            <p className="text-balance font-mono text-base tracking-wider text-holo-400 sm:text-lg sm:tracking-widest md:text-xl">
-              {PORTFOLIO_DATA.personalInfo.title}
-            </p>
+              <h1 className="lg:order-2 text-4xl md:text-6xl font-display font-bold text-white tracking-tighter holo-text-shadow">
+                {PORTFOLIO_DATA.personalInfo.name.toUpperCase()}
+              </h1>
 
-            <div className="glass-panel p-5 md:p-6 max-w-2xl text-base md:text-lg text-gray-300 leading-relaxed border-t border-b border-holo-500/50">
-               {PORTFOLIO_DATA.personalInfo.summary}
+              <p className="lg:order-3 text-balance font-mono text-base tracking-wider text-holo-400 sm:text-lg sm:tracking-widest md:text-xl">
+                {PORTFOLIO_DATA.personalInfo.title}
+              </p>
+
+              <div className="lg:order-5 mt-1 flex w-full max-w-md flex-row justify-center gap-3 sm:max-w-none sm:gap-4">
+                <button
+                  onClick={() => handleViewChange(ViewMode.PROJECTS)}
+                  className="min-h-11 flex-1 px-4 py-2.5 sm:px-6 md:px-8 bg-holo-900/50 border border-holo-500 hover:bg-holo-500 hover:text-white hover:scale-105 transition-all duration-300 rounded font-display tracking-widest uppercase text-sm md:text-base shadow-lg shadow-holo-500/20 sm:min-w-[190px]"
+                >
+                  View Projects
+                </button>
+                <button
+                  onClick={() => handleViewChange(ViewMode.SKILLS)}
+                  className="min-h-11 flex-1 px-4 py-2.5 sm:px-6 md:px-8 bg-transparent border border-holo-700 hover:border-holo-400 hover:text-white hover:scale-105 text-holo-300 transition-all duration-300 rounded font-display tracking-widest uppercase text-sm md:text-base shadow-lg shadow-holo-500/20 sm:min-w-[190px]"
+                >
+                  Tech Stack
+                </button>
+              </div>
             </div>
 
-            <div className="mt-1 flex w-full max-w-xs flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center sm:gap-4">
-               <button onClick={() => setCurrentView(ViewMode.PROJECTS)} className="min-h-11 px-6 py-2.5 md:px-8 bg-holo-900/50 border border-holo-500 hover:bg-holo-500 hover:text-white hover:scale-105 transition-all duration-300 rounded font-display tracking-widest uppercase text-sm md:text-base shadow-lg shadow-holo-500/20 sm:min-w-[190px]">
-                  View Projects
-               </button>
-               <button onClick={() => setCurrentView(ViewMode.SKILLS)} className="min-h-11 px-6 py-2.5 md:px-8 bg-transparent border border-holo-700 hover:border-holo-400 hover:text-white hover:scale-105 text-holo-300 transition-all duration-300 rounded font-display tracking-widest uppercase text-sm md:text-base shadow-lg shadow-holo-500/20 sm:min-w-[190px]">
-                  Tech Stack
-               </button>
+            <div className="lg:order-4 glass-panel p-5 md:p-6 max-w-2xl text-base md:text-lg text-gray-300 leading-relaxed border-t border-b border-holo-500/50">
+              {PORTFOLIO_DATA.personalInfo.summary}
             </div>
           </div>
         );
@@ -144,6 +188,12 @@ const App: React.FC = () => {
             >
               GitHub
             </a>
+            <a
+              href={`mailto:${PORTFOLIO_DATA.personalInfo.contact.email}`}
+              className="text-xs font-mono uppercase tracking-widest text-holo-300 hover:text-white transition-colors whitespace-nowrap"
+            >
+              E-mail
+            </a>
           </div>
         </div>
       </nav>
@@ -212,12 +262,22 @@ const App: React.FC = () => {
       </div>
 
       {/* Main Content Area */}
-      <main className="pt-14 w-full h-full relative overflow-y-auto overflow-x-hidden">
+      {/*
+        The AURA panel is fixed over the page, so the page keeps room for it
+        instead of letting it sit on top of the hero and the card grid. Below
+        lg it is a bottom sheet and the room is below; from lg it is a corner
+        window and the room is to the right, which leaves the hero centred.
+      */}
+      <main
+        className={`pt-14 w-full h-full relative overflow-y-auto overflow-x-hidden ${
+          chatOpen ? 'pb-[47dvh] sm:pb-[440px] lg:pb-0 lg:pr-[456px]' : ''
+        }`}
+      >
         {renderView()}
       </main>
 
       {/* Aura Chat Interface */}
-      <ChatInterface onViewChange={handleViewChange} />
+      <ChatInterface onViewChange={handleViewChange} onOpenChange={setChatOpen} />
     </div>
   );
 };

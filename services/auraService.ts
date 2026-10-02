@@ -62,6 +62,26 @@ const getFallbackResponse = (message: string): string => {
     lowerText.includes('introduce') ||
     lowerText.includes('introduction');
 
+  // Asked for a way to get in touch, answer with one rather than a tour.
+  const wantsContact =
+    lowerText.includes('contact') ||
+    lowerText.includes('email') ||
+    lowerText.includes('e-mail') ||
+    lowerText.includes('reach you') ||
+    lowerText.includes('get in touch') ||
+    lowerText.includes('hire');
+
+  if (wantsContact) {
+    const info = PORTFOLIO_DATA.personalInfo;
+    return `**Contact**
+
+- **Email:** ${info.contact.email}
+- **LinkedIn:** ${info.contact.linkedin}
+- **GitHub:** ${info.contact.github}
+
+Based in ${info.location}. The e-mail link is in the top navigation too.`;
+  }
+
   if (isAboutQuery) {
     const info = PORTFOLIO_DATA.personalInfo;
     return `[Aura materializes as a semi-transparent cyan wireframe projection, casting a soft glow over the screen.]

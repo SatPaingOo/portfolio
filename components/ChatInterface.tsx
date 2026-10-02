@@ -88,9 +88,11 @@ export const TypingText: React.FC<{
 
 interface ChatInterfaceProps {
   onViewChange: (view: any) => void;
+  /** So the page can reserve room for the panel rather than be covered by it. */
+  onOpenChange?: (open: boolean) => void;
 }
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange, onOpenChange }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -116,6 +118,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  useEffect(() => {
+    onOpenChange?.(isOpen);
+  }, [isOpen, onOpenChange]);
+
   const handleSendMessage = async (text: string, isInitial = false) => {
     if (!text.trim()) return;
 
@@ -132,13 +138,19 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
 
     setIsLoading(true);
 
-    // Heuristic view switching based on user input for better UX
+    // Heuristic view switching based on user input for better UX.
+    // "not interested in your projects" names a view it does not want, so a
+    // plain substring match sends the visitor somewhere they just refused.
     const lowerText = text.toLowerCase();
-    if (lowerText.includes('project')) onViewChange('PROJECTS');
-    else if (lowerText.includes('skill')) onViewChange('SKILLS');
-    else if (lowerText.includes('history') || lowerText.includes('experience') || lowerText.includes('education')) onViewChange('HISTORY');
-    else if (lowerText.includes('gallery') || lowerText.includes('photo') || lowerText.includes('image') || lowerText.includes('picture')) onViewChange('GALLERY');
-    else if (lowerText.includes('home') || lowerText.includes('intro')) onViewChange('HOME');
+    const negated = /\b(no|not|never|rather|instead|without|don\u2019?t|dont|don't)\b/.test(lowerText);
+
+    if (!negated) {
+      if (lowerText.includes('project')) onViewChange('PROJECTS');
+      else if (lowerText.includes('skill')) onViewChange('SKILLS');
+      else if (lowerText.includes('history') || lowerText.includes('experience') || lowerText.includes('education')) onViewChange('HISTORY');
+      else if (lowerText.includes('gallery') || lowerText.includes('photo') || lowerText.includes('image') || lowerText.includes('picture')) onViewChange('GALLERY');
+      else if (lowerText.includes('home') || lowerText.includes('intro')) onViewChange('HOME');
+    }
 
     try {
       const responseText = await sendMessageToAura(text);
@@ -166,7 +178,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
 
   return (
     <div className={`fixed z-50 transition-all duration-500 ease-in-out pointer-events-none 
-      ${isOpen ? 'inset-x-0 bottom-0 sm:bottom-4 sm:right-4 sm:inset-x-auto w-full sm:w-[500px] md:w-[450px] landscape:max-w-[400px] landscape:md:max-w-[450px] landscape:right-0 landscape:sm:right-4 h-[80dvh] landscape:h-[90dvh] sm:h-[600px] md:h-[600px] flex flex-col justify-end' : 'bottom-3 right-3 sm:bottom-4 sm:right-4 w-14 h-14 sm:w-16 sm:h-16 landscape:bottom-2 landscape:right-2'}`}>
+      ${isOpen ? 'inset-x-0 bottom-0 sm:bottom-4 sm:right-4 sm:inset-x-auto w-full sm:w-[400px] h-[45dvh] sm:h-[420px] max-h-[48vh] flex flex-col justify-end' : 'bottom-3 right-3 sm:bottom-4 sm:right-4 w-14 h-14 sm:w-16 sm:h-16'}`}>
       {isOpen ? (
         <div key="chat-window" className="flex flex-col w-full h-full max-h-full glass-panel rounded-t-lg sm:rounded-lg overflow-hidden border-t sm:border border-holo-500/50 shadow-[0_-10px_40px_rgba(0,171,209,0.2)] sm:shadow-[0_0_30px_rgba(0,171,209,0.3)] pointer-events-auto">
           {/* Header */}

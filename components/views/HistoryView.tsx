@@ -5,9 +5,9 @@ const HistoryView: React.FC = () => {
   return (
     <div className="w-full h-full overflow-y-auto overflow-x-hidden p-3 sm:p-4 md:p-10 pb-24">
       <div className="max-w-4xl mx-auto px-2">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-white mb-2 holo-text-shadow">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-white mb-2 holo-text-shadow">
           TEMPORAL LOGS
-        </h2>
+        </h1>
         <p className="text-holo-300 font-mono mb-8 sm:mb-10 md:mb-12 text-xs sm:text-sm">
           // RETRIEVING EMPLOYMENT & EDUCATION HISTORY...
         </p>

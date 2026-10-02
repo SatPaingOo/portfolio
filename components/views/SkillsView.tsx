@@ -47,9 +47,9 @@ const SkillsView: React.FC = () => {
 
     return (
         <div className="w-full h-full flex flex-col items-center justify-start p-3 sm:p-4 md:p-10 pb-24 overflow-y-auto overflow-x-hidden">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-white mb-2 holo-text-shadow text-center px-2">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-white mb-2 holo-text-shadow text-center px-2">
                 SKILL MATRIX PROJECTION
-            </h2>
+            </h1>
             <p className="text-holo-300 font-mono mb-4 sm:mb-6 md:mb-8 text-xs sm:text-sm text-center px-2">
           // ANALYZING PROFICIENCY LEVELS...
             </p>

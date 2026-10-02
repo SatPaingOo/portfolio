@@ -118,9 +118,9 @@ const ProjectsView: React.FC = () => {
     <div className="h-full w-full overflow-y-auto overflow-x-hidden p-4 pb-24 md:p-10">
       <div className="mx-auto max-w-7xl">
         <header className="mb-8">
-          <h2 className="holo-text-shadow font-display text-2xl font-bold text-white sm:text-3xl md:text-4xl">
+          <h1 className="holo-text-shadow font-display text-2xl font-bold text-white sm:text-3xl md:text-4xl">
             PROJECT NODES
-          </h2>
+          </h1>
           <p className="mt-2 border-l-2 border-holo-500 pl-4 font-mono text-xs text-holo-300 sm:text-sm">
             // ACCESSING ARCHIVE...
             <br />

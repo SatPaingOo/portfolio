@@ -196,7 +196,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange, onOpenChang
                 </span>
               </div>
             </div>
-            <button onClick={() => setIsOpen(false)} className="text-holo-400 hover:text-white transition-colors flex-shrink-0 p-1">
+            <button
+              onClick={() => setIsOpen(false)}
+              aria-label="Collapse AURA"
+              className="flex min-h-11 min-w-11 items-center justify-center text-holo-400 hover:text-white transition-colors flex-shrink-0"
+            >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 sm:w-6 sm:h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
               </svg>
@@ -246,12 +250,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange, onOpenChang
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSendMessage(input)}
                 placeholder="Ask AURA..."
-                className="flex-1 bg-holo-950/50 border border-holo-700 rounded p-1.5 sm:p-2 text-holo-100 focus:outline-none focus:border-holo-400 placeholder-holo-700 font-mono text-[16px] min-w-0"
+                className="flex-1 min-h-11 bg-holo-950/50 border border-holo-700 rounded px-3 text-holo-100 focus:border-holo-400 placeholder-holo-600 font-mono text-[16px] min-w-0"
               />
               <button
                 onClick={() => handleSendMessage(input)}
                 disabled={isLoading || !input.trim()}
-                className="px-2 sm:px-4 bg-holo-800 hover:bg-holo-600 text-white rounded border border-holo-500 transition-colors disabled:opacity-50 text-xs sm:text-sm whitespace-nowrap flex-shrink-0"
+                className="min-h-11 px-3 sm:px-4 bg-holo-800 hover:bg-holo-600 text-white rounded border border-holo-500 transition-colors disabled:opacity-50 text-xs sm:text-sm whitespace-nowrap flex-shrink-0"
               >
                 SEND
               </button>

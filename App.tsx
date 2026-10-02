@@ -28,6 +28,19 @@ const App: React.FC = () => {
   );
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(true);
+  const drawerRef = React.useRef<HTMLDivElement>(null);
+
+  // Opening the drawer moves focus into it and Escape closes it, so it behaves
+  // like the dialog it looks like rather than a panel the keyboard cannot use.
+  useEffect(() => {
+    if (!sidebarOpen) return;
+    drawerRef.current?.querySelector('button')?.focus();
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setSidebarOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [sidebarOpen]);
 
   const handleViewChange = useCallback((view: ViewMode) => {
     setCurrentView(view);
@@ -112,23 +125,26 @@ const App: React.FC = () => {
 
       {/* Top Navigation Bar */}
       <nav className="fixed top-0 left-0 right-0 h-14 bg-black/60 backdrop-blur-md border-b border-holo-900/50 z-40 flex items-center justify-between px-3 sm:px-4 md:px-10 shadow-lg shadow-black/20">
-        <div
-          className="flex flex-col leading-tight cursor-pointer min-w-0 flex-shrink"
+        <button
+          type="button"
+          className="flex min-h-11 flex-col justify-center leading-tight min-w-0 flex-shrink text-left"
           onClick={() => handleViewChange(ViewMode.HOME)}
         >
           <span className="text-holo-400 font-display font-bold text-base sm:text-lg md:text-xl hover:text-white transition-colors truncate">
             SPO.SYS
           </span>
-          <span className="text-[8px] sm:text-[9px] font-mono uppercase tracking-[0.2em] sm:tracking-[0.3em] text-holo-700 truncate">
+          <span className="text-[8px] sm:text-[9px] font-mono uppercase tracking-[0.2em] sm:tracking-[0.3em] text-holo-400 truncate">
             Aura portfolio for Sat Paing Oo
           </span>
-        </div>
+        </button>
 
         {/* Hamburger button - mobile only */}
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="md:hidden text-holo-400 hover:text-white transition-colors p-2"
+          className="md:hidden flex min-h-11 min-w-11 items-center justify-center text-holo-400 hover:text-white transition-colors"
           aria-label="Toggle navigation"
+          aria-expanded={sidebarOpen}
+          aria-controls="mobile-drawer"
         >
           <svg
             className="w-6 h-6"
@@ -161,10 +177,10 @@ const App: React.FC = () => {
               <button
                 key={mode}
                 onClick={() => handleViewChange(mode)}
-                className={`text-xs lg:text-sm tracking-widest font-mono uppercase transition-all whitespace-nowrap ${
+                className={`flex min-h-11 items-center px-1 text-xs lg:text-sm tracking-widest font-mono uppercase transition-all whitespace-nowrap ${
                   currentView === mode
                     ? 'text-white border-b-2 border-holo-400'
-                    : 'text-gray-500 hover:text-holo-300'
+                    : 'text-gray-400 hover:text-holo-300'
                 }`}
               >
                 {mode}
@@ -176,7 +192,7 @@ const App: React.FC = () => {
               href={PORTFOLIO_DATA.personalInfo.contact.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs font-mono uppercase tracking-widest text-holo-300 hover:text-white transition-colors whitespace-nowrap"
+              className="flex min-h-11 items-center text-xs font-mono uppercase tracking-widest text-holo-300 hover:text-white transition-colors whitespace-nowrap"
             >
               LinkedIn
             </a>
@@ -184,13 +200,13 @@ const App: React.FC = () => {
               href={PORTFOLIO_DATA.personalInfo.contact.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs font-mono uppercase tracking-widest text-holo-300 hover:text-white transition-colors whitespace-nowrap"
+              className="flex min-h-11 items-center text-xs font-mono uppercase tracking-widest text-holo-300 hover:text-white transition-colors whitespace-nowrap"
             >
               GitHub
             </a>
             <a
               href={`mailto:${PORTFOLIO_DATA.personalInfo.contact.email}`}
-              className="text-xs font-mono uppercase tracking-widest text-holo-300 hover:text-white transition-colors whitespace-nowrap"
+              className="flex min-h-11 items-center text-xs font-mono uppercase tracking-widest text-holo-300 hover:text-white transition-colors whitespace-nowrap"
             >
               E-mail
             </a>
@@ -207,9 +223,16 @@ const App: React.FC = () => {
       )}
 
       {/* Mobile sidebar */}
+      {/* `invisible` when closed, so its links leave the tab order and the
+          accessibility tree instead of waiting off-screen. */}
       <div
+        id="mobile-drawer"
+        ref={drawerRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Navigation"
         className={`fixed top-0 left-0 h-full w-[280px] max-w-[85vw] bg-black/95 backdrop-blur-md border-r border-holo-900/50 z-50 transform transition-transform duration-300 ease-in-out md:hidden ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full hidden'
         }`}
       >
         <div className="flex flex-col h-full pt-16 px-6">

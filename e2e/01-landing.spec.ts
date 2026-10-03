@@ -47,6 +47,8 @@ test.describe('Landing experience', () => {
     // screen is.
     if (page.viewportSize()!.width >= 640) {
       expect(box.height, 'the panel runs the whole height of the page').toBeLessThan(below);
+      expect(box.width, 'the panel is too narrow to hold a conversation').toBeGreaterThanOrEqual(400);
+      expect(box.width, 'the panel has grown from a column into a sidebar').toBeLessThanOrEqual(560);
     }
   });
 

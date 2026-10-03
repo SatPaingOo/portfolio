@@ -191,18 +191,24 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
   };
 
   /*
-   * One height rule for every screen: a share of the viewport, capped so the
-   * panel stays a floating assistant rather than becoming a wall on a tall
-   * monitor. It used to be `45dvh` on phones but a flat `420px` from sm up,
-   * which is not a size at all - the same box on a 1024px tablet and a 1440px
-   * monitor, so it read as 31% of one screen and 29% of the other while a
-   * phone got 45%. The old `max-h-[48vh]` cap also mixed `vh` into a `dvh`
-   * height, so on a phone the two disagreed as the URL bar came and went.
-   * 46dvh keeps it under the half-the-viewport ceiling on every size.
+   * The opened panel runs up to the header and stops there.
+   *
+   * On a phone it is a sheet filling everything below the 3.5rem nav, because
+   * a conversation needs room to be read and the visitor asked for it: there
+   * is nothing to protect behind it. From sm it is a corner window that still
+   * reaches towards the header but is capped, so a tall monitor gets a tall
+   * column rather than a wall of chat down the side of the screen. 5.5rem is
+   * the nav plus the 1rem it sits off the bottom and the 1rem gap left under
+   * the nav.
+   *
+   * Sized off the viewport throughout, in `dvh` only. A flat `420px` from sm
+   * up had been giving a 1024px tablet and a 1440px monitor the same box, and
+   * an earlier `max-h-[48vh]` cap mixed `vh` into a `dvh` height so the two
+   * disagreed on a phone as the URL bar came and went.
    */
   return (
     <div className={`fixed z-50 transition-all duration-500 ease-in-out pointer-events-none 
-      ${isOpen ? 'inset-x-0 bottom-0 sm:bottom-4 sm:right-4 sm:inset-x-auto w-full sm:w-[400px] h-[min(46dvh,620px)] flex flex-col justify-end' : 'bottom-3 right-3 sm:bottom-4 sm:right-4 w-14 h-14 sm:w-16 sm:h-16'}`}>
+      ${isOpen ? 'inset-x-0 bottom-0 sm:bottom-4 sm:right-4 sm:inset-x-auto w-full sm:w-[400px] h-[calc(100dvh_-_3.5rem)] sm:h-[min(calc(100dvh_-_5.5rem),760px)] flex flex-col justify-end' : 'bottom-3 right-3 sm:bottom-4 sm:right-4 w-14 h-14 sm:w-16 sm:h-16'}`}>
       {isOpen ? (
         <div key="chat-window" className="flex flex-col w-full h-full max-h-full glass-panel rounded-t-lg sm:rounded-lg overflow-hidden border-t sm:border border-holo-500/50 shadow-[0_-10px_40px_rgba(0,171,209,0.2)] sm:shadow-[0_0_30px_rgba(0,171,209,0.3)] pointer-events-auto">
           {/* Header */}

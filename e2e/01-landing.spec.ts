@@ -17,18 +17,37 @@ test.describe('Landing experience', () => {
     }
   });
 
-  test('the chat panel covers at most half of the viewport height', async ({ page }, info) => {
+  test('the opened chat runs up to the header and stops there', async ({ page }, info) => {
     await gotoHome(page);
-    // It is collapsed on arrival, so the landing page cannot be swallowed at
-    // all. Open it and hold the opened panel to the same half-screen ceiling.
+    // Collapsed on arrival, so the landing page cannot be buried at all - the
+    // two tests above cover that. What matters once it is opened is that the
+    // conversation has room to be read without taking the header with it.
     await openChat(page);
     const panel = chatPanel(page);
     await expect(panel).toBeVisible();
+
     const box = (await panel.boundingBox())!;
+    const nav = (await page.locator('nav').boundingBox())!;
     const vh = page.viewportSize()!.height;
-    const share = box.height / vh;
-    info.annotations.push({ type: 'coverage', description: `${(share * 100).toFixed(0)}% of viewport height` });
-    expect(share, 'chat panel swallows the landing page').toBeLessThanOrEqual(0.5);
+    const below = vh - (nav.y + nav.height);
+    info.annotations.push({
+      type: 'panel',
+      description: `${Math.round(box.height)}px, ${((box.height / vh) * 100).toFixed(0)}% of the viewport`,
+    });
+
+    expect(Math.round(box.y), 'the panel covers the top navigation').toBeGreaterThanOrEqual(
+      Math.round(nav.y + nav.height) - 1,
+    );
+    expect(box.height, 'the panel is too short to hold a conversation').toBeGreaterThanOrEqual(
+      Math.min(below * 0.8, 560),
+    );
+
+    // A phone sheet is meant to fill what is under the nav. A corner window is
+    // not: something of the page stays visible above it however tall the
+    // screen is.
+    if (page.viewportSize()!.width >= 640) {
+      expect(box.height, 'the panel runs the whole height of the page').toBeLessThan(below);
+    }
   });
 
   test('the hero exposes a contact route without asking the chatbot', async ({ page }) => {

@@ -102,19 +102,16 @@ export const TypingText: React.FC<{
 
 interface ChatInterfaceProps {
   onViewChange: (view: any) => void;
-  /**
-   * Open state lives in App, which reserves the panel's room rather than
-   * letting it sit on the page. Owned there rather than mirrored back from
-   * here, so opening or closing the panel and resizing the page around it are
-   * one render: reported through a callback, there was a commit in between
-   * where the panel had already collapsed but `main` still held 456px open
-   * for it, and anything measuring in that window saw the squeezed layout.
-   */
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
 }
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange, open: isOpen, onOpenChange: setIsOpen }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
+  /**
+   * Closed on arrival. AURA is an invitation, not the landing page: opened by
+   * default it took half a phone screen and a full column of a desktop one,
+   * and the page had to be squeezed around something nobody had asked for
+   * yet. It floats over the page once the visitor opens it.
+   */
+  const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -216,6 +213,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange, open: isOpe
             <button
               onClick={() => setIsOpen(false)}
               aria-label="Collapse AURA"
+              aria-expanded={true}
               className="flex min-h-11 min-w-11 items-center justify-center text-holo-400 hover:text-white transition-colors flex-shrink-0"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 sm:w-6 sm:h-6">
@@ -283,6 +281,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange, open: isOpe
         <button
           key="chat-toggle"
           onClick={() => setIsOpen(true)}
+          aria-label="Open AURA"
+          aria-expanded={false}
           className="w-14 h-14 sm:w-16 sm:h-16 rounded-full glass-panel border border-holo-400 flex items-center justify-center hover:scale-110 transition-transform group cursor-pointer pointer-events-auto"
         >
           {/* Simple Geometric Representation of Aura (Minimised) */}

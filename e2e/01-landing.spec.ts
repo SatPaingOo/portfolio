@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { gotoHome, chatPanel, closeChat, isOccluded } from './helpers';
+import { gotoHome, chatPanel, closeChat, openChat, isOccluded } from './helpers';
 
 test.describe('Landing experience', () => {
   test('the visitor name is visible on arrival, not hidden behind the chat', async ({ page }) => {
@@ -19,6 +19,9 @@ test.describe('Landing experience', () => {
 
   test('the chat panel covers at most half of the viewport height', async ({ page }, info) => {
     await gotoHome(page);
+    // It is collapsed on arrival, so the landing page cannot be swallowed at
+    // all. Open it and hold the opened panel to the same half-screen ceiling.
+    await openChat(page);
     const panel = chatPanel(page);
     await expect(panel).toBeVisible();
     const box = (await panel.boundingBox())!;

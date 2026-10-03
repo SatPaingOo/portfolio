@@ -19,7 +19,7 @@ Items marked **[fixed]** have been repaired and are held by a named test.
 
 ## P0 — Fix before showing this to a recruiter
 
-### 1. The AURA chat panel buries the landing page
+### 1. The AURA chat panel buries the landing page — **[fixed]**
 
 `isOpen` starts as `true` (`components/ChatInterface.tsx:98`), and the panel is
 sized as a fraction of the viewport, so it lands on top of the hero instead of
@@ -46,6 +46,18 @@ Fix: start collapsed (`useState(false)`), drop the `landscape:` height, cap the
 panel at roughly half the viewport, and on `md` and up either dock it in a
 column the main content is padded around, or keep it as an overlay that opens on
 demand.
+
+Fixed, taking the overlay branch. The `landscape:` height is gone and the panel
+is capped under half the viewport, held there by a named test. It starts
+collapsed as its bubble, so the hero owns the whole window on arrival and the
+page holds no room for it.
+
+Padding the main content around it was tried first and is what the overlay
+replaced: the panel only fills the bottom of its side of the screen, so a
+456px column reserved for it on desktop left a quarter of the window empty with
+the hero shoved off-centre against it, and on a phone the 47dvh reserved below
+split the screen in half against a panel that had nothing in it yet. Opening it
+is the visitor's choice now, and it floats from the corner its bubble was in.
 
 ### 2. There is no way to make contact
 

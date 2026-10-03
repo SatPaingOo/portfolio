@@ -27,7 +27,6 @@ const App: React.FC = () => {
     viewFromHash(typeof window === 'undefined' ? '' : window.location.hash),
   );
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [chatOpen, setChatOpen] = useState(true);
   const drawerRef = React.useRef<HTMLDivElement>(null);
 
   // Opening the drawer moves focus into it and Escape closes it, so it behaves
@@ -79,19 +78,11 @@ const App: React.FC = () => {
              bottom padding keeps the buttons clear of the viewport edge and of
              the collapsed AURA bubble. */
           <div className="flex min-h-full flex-col items-center justify-center gap-2 px-4 pt-2 pb-20 text-center z-10 sm:gap-4 sm:pt-6 sm:pb-12 md:px-6">
-            {/* Below lg, while the AURA sheet is open, this group owns the
-                first screen: the name and both calls to action sit above the
-                sheet rather than under it, and the summary begins on the next
-                scroll instead of being cut in half. Once the sheet is
-                collapsed there is nothing to clear, and holding the group at
-                full height would force a scroll onto a window that has room
-                for the whole hero. At lg the wrapper dissolves with `contents`
-                and the explicit orders restore the original reading order. */}
-            <div
-              className={`flex w-full flex-col items-center justify-start gap-2 sm:gap-4 lg:contents ${
-                chatOpen ? 'max-lg:min-h-[calc(100dvh-3.5rem)]' : ''
-              }`}
-            >
+            {/* Below lg this keeps the head, the name and both calls to
+                action together as one block. At lg the wrapper dissolves with
+                `contents` and the explicit orders restore the reading order
+                around the summary. */}
+            <div className="flex w-full flex-col items-center justify-start gap-2 sm:gap-4 lg:contents">
               <HeroHead />
 
               <h1 className="lg:order-2 text-4xl md:text-6xl font-display font-bold text-white tracking-tighter holo-text-shadow">
@@ -102,7 +93,10 @@ const App: React.FC = () => {
                 {PORTFOLIO_DATA.personalInfo.title}
               </p>
 
-              <div className="lg:order-5 mt-1 flex w-full max-w-md flex-row justify-center gap-3 sm:max-w-none sm:gap-4">
+              {/* Capped to the summary panel's measure so the two line up.
+                  Uncapped, the row stretched the full width of the window once
+                  the page stopped holding a column open for the AURA panel. */}
+              <div className="lg:order-5 mt-1 flex w-full max-w-md flex-row justify-center gap-3 sm:max-w-2xl sm:gap-4">
                 <button
                   onClick={() => handleViewChange(ViewMode.PROJECTS)}
                   className="min-h-11 flex-1 px-4 py-2.5 sm:px-6 md:px-8 bg-holo-900/50 border border-holo-500 hover:bg-holo-500 hover:text-white hover:scale-105 transition-all duration-300 rounded font-display tracking-widest uppercase text-sm md:text-base shadow-lg shadow-holo-500/20 sm:min-w-[190px]"
@@ -293,21 +287,18 @@ const App: React.FC = () => {
 
       {/* Main Content Area */}
       {/*
-        The AURA panel is fixed over the page, so the page keeps room for it
-        instead of letting it sit on top of the hero and the card grid. Below
-        lg it is a bottom sheet and the room is below; from lg it is a corner
-        window and the room is to the right, which leaves the hero centred.
+        No room is held for the AURA panel. It starts collapsed as its bubble,
+        so the hero gets the whole window; opening it is the visitor's choice
+        and it floats over the page from the corner the bubble was in. Holding
+        a 456px column open for a panel that only fills the bottom of it left
+        the hero shoved off-centre against an empty quarter of the screen.
       */}
-      <main
-        className={`pt-14 w-full h-full relative overflow-y-auto overflow-x-hidden ${
-          chatOpen ? 'pb-[47dvh] sm:pb-[440px] lg:pb-0 lg:pr-[456px]' : ''
-        }`}
-      >
+      <main className="pt-14 w-full h-full relative overflow-y-auto overflow-x-hidden">
         {renderView()}
       </main>
 
       {/* Aura Chat Interface */}
-      <ChatInterface onViewChange={handleViewChange} open={chatOpen} onOpenChange={setChatOpen} />
+      <ChatInterface onViewChange={handleViewChange} />
     </div>
   );
 };

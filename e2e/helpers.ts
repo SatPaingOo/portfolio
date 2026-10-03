@@ -34,9 +34,25 @@ export function chatPanel(page: Page): Locator {
  */
 export async function openChat(page: Page) {
   const box = page.getByRole('textbox', { name: /Ask AURA/i });
-  if (await box.count()) return;
-  await page.locator('button.rounded-full.glass-panel').first().click();
-  await expect(box).toBeVisible();
+  if (!(await box.count())) {
+    await page.locator('button.rounded-full.glass-panel').first().click();
+    await expect(box).toBeVisible();
+  }
+  // The wrapper animates from the bubble's size to the panel's over 500ms.
+  // Measured before that lands, the panel reports roughly 64x64 - the bubble -
+  // so wait until its height holds still.
+  const panel = chatPanel(page);
+  await expect
+    .poll(
+      async () => {
+        const before = (await panel.boundingBox())?.height ?? 0;
+        await page.waitForTimeout(80);
+        const after = (await panel.boundingBox())?.height ?? 0;
+        return before > 0 && Math.abs(after - before) < 1 ? 'settled' : 'opening';
+      },
+      { message: 'the AURA panel never finished opening', timeout: 5000 },
+    )
+    .toBe('settled');
   await settleLayout(page);
 }
 

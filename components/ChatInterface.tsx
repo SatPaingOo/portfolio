@@ -201,6 +201,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
    * the nav plus the 1rem it sits off the bottom and the 1rem gap left under
    * the nav.
    *
+   * Width follows the same idea: full bleed as a sheet, then a column that
+   * grows with the window between 400px and 520px. Left at a flat 400px it
+   * was a fifth of a QHD screen and nearly two thirds of a small tablet.
+   *
    * Sized off the viewport throughout, in `dvh` only. A flat `420px` from sm
    * up had been giving a 1024px tablet and a 1440px monitor the same box, and
    * an earlier `max-h-[48vh]` cap mixed `vh` into a `dvh` height so the two
@@ -208,7 +212,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onViewChange }) => {
    */
   return (
     <div className={`fixed z-50 transition-all duration-500 ease-in-out pointer-events-none 
-      ${isOpen ? 'inset-x-0 bottom-0 sm:bottom-4 sm:right-4 sm:inset-x-auto w-full sm:w-[400px] h-[calc(100dvh_-_3.5rem)] sm:h-[min(calc(100dvh_-_5.5rem),760px)] flex flex-col justify-end' : 'bottom-3 right-3 sm:bottom-4 sm:right-4 w-14 h-14 sm:w-16 sm:h-16'}`}>
+      ${isOpen ? 'inset-x-0 bottom-0 sm:bottom-4 sm:right-4 sm:inset-x-auto w-full sm:w-[clamp(400px,30vw,520px)] h-[calc(100dvh_-_3.5rem)] sm:h-[min(calc(100dvh_-_5.5rem),760px)] flex flex-col justify-end' : 'bottom-3 right-3 sm:bottom-4 sm:right-4 w-14 h-14 sm:w-16 sm:h-16'}`}>
       {isOpen ? (
         <div key="chat-window" className="flex flex-col w-full h-full max-h-full glass-panel rounded-t-lg sm:rounded-lg overflow-hidden border-t sm:border border-holo-500/50 shadow-[0_-10px_40px_rgba(0,171,209,0.2)] sm:shadow-[0_0_30px_rgba(0,171,209,0.3)] pointer-events-auto">
           {/* Header */}

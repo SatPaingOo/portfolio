@@ -26,15 +26,21 @@ export function chatPanel(page: Page): Locator {
 }
 
 /**
- * Collapse the chat so the rest of the UI is reachable.
+ * Open the AURA panel, which starts collapsed as its bubble.
  *
- * The room the page reserves for the panel is sized in `dvh`, and Chromium
- * re-resolves dynamic viewport units on a frame boundary rather than when the
- * class goes away: for one frame after the panel closes, `main` still measures
- * with the bottom sheet's 47dvh in place, even though its class attribute no
- * longer carries it. Anything measuring the hero straight after this would read
- * that stale frame, so wait for the layout to land.
+ * The panel floats over the page rather than being given room, so nothing
+ * reflows, but wait for the layout to land anyway: the panel itself is sized
+ * in `dvh` and Chromium resolves dynamic viewport units on a frame boundary.
  */
+export async function openChat(page: Page) {
+  const box = page.getByRole('textbox', { name: /Ask AURA/i });
+  if (await box.count()) return;
+  await page.locator('button.rounded-full.glass-panel').first().click();
+  await expect(box).toBeVisible();
+  await settleLayout(page);
+}
+
+/** Collapse the chat. A no-op when it is already closed, which is the default. */
 export async function closeChat(page: Page) {
   const collapse = page.locator('button:has(svg path[d^="M19.5 8.25"])');
   if (await collapse.count()) {
@@ -52,6 +58,7 @@ export async function settleLayout(page: Page) {
 }
 
 export async function askAura(page: Page, question: string) {
+  await openChat(page);
   const box = page.getByRole('textbox', { name: /Ask AURA/i });
   await box.fill(question);
   await box.press('Enter');
